@@ -1,49 +1,35 @@
-import re
+#!/usr/bin/env python
 
+from _pybgpstream import BGPStream, BGPRecord, BGPElem
+from collections import defaultdict
 
-def get_fields(fin):
-    tags = []
-    tag_re = re.compile("(\w+):?")
-    i = 0
-    for line in fin:
-        result = tag_re.match(line)
+stream = BGPStream()
+rec = BGPRecord()
 
-        if result == None:
-            continue
-    
-        tag = result.group(1)
-        if not tag in tags:
-            tags.append(tag)
+stream.add_filter('collector', 'rrc01')
 
-        i += 1
-        if i % 1000000 == 0:
-            print i, tags
-            
-    return tags
+stream.add_filter('record-type','ribs')
 
-tags = ['TIME', 'TYPE', 'PREFIX', 'SEQUENCE',
-        'FROM', 'ORIGINATED', 'ORIGIN', 'ASPATH',
-        'NEXT_HOP', 'COMMUNITY', 'MULTI_EXIT_DISC',
-        'ATOMIC_AGGREGATE', 'AGGREGATOR', 'MP_REACH_NLRI']
+stream.add_interval_filter(1438415400,1438415400)
 
-class RoutingEntry:
-    def __init__(self):
-        self.time             = ""
-        self.type             = ""
-        self.prefix           = ""
-        self.sequence         = ""
-        self.sent_from        = ("","")
-        self.sent_time        = ""
-        self.origin           = ""
-        self.as_path          = []
-        self.next_nop         = []
-        self.community        = []
-        self.multi_exit_disc  = None
-        self.atomic_aggregate = None
-        self.aggregator       = ("","")
-        self.mp_reach_nlri    = ""
+stream.start()
 
+prefix_origin = defaultdict(set)
 
+count = 0
+while(stream.get_next_record(rec)):
+  print "New Record"
+  print rec.status
+  print rec.time
+  print rec.dump_position
+  print
+  elem = rec.get_next_elem()
+  while(elem and count < 1000):
+    print 'TYPE:' , elem.type
+    print 'TIME:' , elem.time
+    print 'PEER_ADDRESS:' , elem.peer_address
+    print 'PEER_ASN:' , elem.peer_asn
+    print 'FIELDS:' , elem.fields
+    print
+   
 
-    
-        

@@ -37,7 +37,7 @@ prefix_file.write("block:ID|:LABEL\n")
 route_file.write(":ID|length:int|:LABEL\n")
 connections_file.write(":ID|:LABEL\n")
 connect_rels_file.write(":START_ID|:END_ID|:TYPE|\n")
-route_rels_file.write(":START_ID|:END_ID|:TYPE|\n")
+route_rels_file.write(":START_ID|:END_ID|:TYPE|order\n")
 
 for collector in collectors:
   collector_file.write('{c}|Collector\n'.format(c=collector))
@@ -68,8 +68,8 @@ while(stream.get_next_record(rec)):
 
     route_set.add(route_id)
     route_file.write("{rid}|{length}|Route\n".format(rid=route_id,length=len(as_path)))
-    route_rels_file.write("{rid}|{c}|HAS_COLLECTOR\n".format(rid=route_id,c=collector))
-    route_rels_file.write("{rid}|{p}|HAS_IP_BLOCK\n".format(rid=route_id,p=prefix))
+    route_rels_file.write("{rid}|{c}|HAS_COLLECTOR|null\n".format(rid=route_id,c=collector))
+    route_rels_file.write("{rid}|{p}|HAS_IP_BLOCK|null\n".format(rid=route_id,p=prefix))
     
     # Connection from collector to peer
     if(not as_path[0] in AS_set):
@@ -78,11 +78,8 @@ while(stream.get_next_record(rec)):
     pair = (collector,as_path[0])
     if(not pair in connections_set):
       connections_set.add(pair)
-      connections_file.write("{p}|Connection\n".format(p=pair))
-      connect_rels_file.write("{c}|{p}|FROM\n".format(p=pair,c=collector))
-      connect_rels_file.write("{p}|{asn}|TO\n".format(p=pair,asn=as_path[0]))
-    route_rels_file.write("{rid}|{asn}|HAS_AS\n".format(rid=route_id,asn=as_path[0]))
-    route_rels_file.write("{rid}|{conn}|HAS_CONNECTION\n".format(rid=route_id,conn=pair))
+      connect_rels_file.write("{c}|{asn}|TO\n".format(c=collector,asn=as_path[0]))
+    route_rels_file.write("{rid}|{asn}|HAS_AS|1\n".format(rid=route_id,asn=as_path[0]))
 
     for i in range(len(as_path)-1):
       # Skip AS path prepending
@@ -95,12 +92,9 @@ while(stream.get_next_record(rec)):
       pair = (as_path[i],as_path[i+1])
       if(not pair in connections_set):
         connections_set.add(pair)
-        connections_file.write("{p}|Connection\n".format(p=pair))
-        connect_rels_file.write("{asn}|{p}|FROM\n".format(p=pair,asn=as_path[i]))
-        connect_rels_file.write("{p}|{asn}|TO\n".format(p=pair,asn=as_path[i+1]))
+        connect_rels_file.write("{asn1}|{asn2}|TO\n".format(asn1=as_path[i],asn2=as_path[i+1]))
 
-      route_rels_file.write("{rid}|{asn}|HAS_AS\n".format(rid=route_id,asn=as_path[i+1]))
-      route_rels_file.write("{rid}|{conn}|HAS_CONNECTION\n".format(rid=route_id,conn=pair))
+      route_rels_file.write("{rid}|{asn}|HAS_AS|{order}`\n".format(rid=route_id,asn=as_path[i+1],order=i+2))
 
     # Connection to IP block
     if(not prefix in prefix_set):

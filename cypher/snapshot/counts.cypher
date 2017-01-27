@@ -16,10 +16,7 @@ match (c:Collector)-->()-->(a:AS) return c as Collector, count(a) as Peers;
 match (c:Collector)<--(r:Route) return c as Collector,count(r) as Routes;
 
 // Count Routes by peer
-match (c:Collector)-->(conn:Connection)-->(peer:AS),
-      (conn)<-[:HAS_CONNECTION]-(r:Route)
+match (c:Collector)-->(peer:AS),
+      (peer)<-[:HAS_AS]-(r:Route)
 return c.name as Collector, peer.ASN as Peer_ASN, peer.name as Peer_Name, count(r) as Count
 order by Collector, Count desc;
-
-// Count Connections
-match (c:Connection) return count(c) as Connections;

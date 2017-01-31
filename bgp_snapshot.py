@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Collects snapshot data from a ribs file and adds those nodes and 
-# connections to a database file
+# connections to a database file. Contains routing data as well as AS connections
 
 from _pybgpstream import BGPStream, BGPRecord, BGPElem
 from collections import defaultdict

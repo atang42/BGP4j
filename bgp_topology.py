@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-# Collects AS paths from a ribs file and adds those nodes and 
-# connections to a database file
+# Models the links between ASes that can be inferred from the routing data
 
 from _pybgpstream import BGPStream, BGPRecord, BGPElem
 from collections import defaultdict

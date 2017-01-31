@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# A script for importing all the csv files that get generated
+
+# Change these to wherever the programs and targets are on your computer
 IMPORT="/Users/alanmac/neo4j/bin/neo4j-import"
 CSV_DIR="csv"
 TARGET="/Users/alanmac/neo4j/data/databases/graph.db"

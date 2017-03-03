@@ -7,16 +7,17 @@
 from _pybgpstream import BGPStream, BGPRecord, BGPElem
 from collections import defaultdict
 import string
+import datetime
 
 # Initialize BGPStream with relevant filters
 stream = BGPStream()
 rec = BGPRecord()
 
-collectors = ['rrc01','rrc14','rrc15']
+collectors = ['rrc01']
 for collector in collectors:
   stream.add_filter('collector', collector)
 stream.add_filter('record-type', 'ribs')
-stream.add_interval_filter(1438400000,1438600000)
+stream.add_interval_filter(1438000000,1439000000)
 stream.add_filter('prefix', '8.8.0.0/16')
 
 stream.start()
@@ -37,9 +38,9 @@ collector_file.write("name:ID|:LABEL\n")
 AS_file.write("ASN:ID|name|:LABEL\n")
 prefix_file.write("block:ID|:LABEL\n")
 route_file.write(":ID|length:int|:LABEL\n")
-time_file.write("time:ID|:LABEL\n")
+time_file.write("time:ID|year|month|day|hour|minute|second|:LABEL\n")
 connect_rels_file.write(":START_ID|:END_ID|:TYPE|\n")
-route_rels_file.write(":START_ID|:END_ID|:TYPE|order\n")
+route_rels_file.write(":START_ID|:END_ID|:TYPE|order:INT\n")
 time_rels_file.write(":START_ID|:END_ID|:TYPE\n")
 
 for collector in collectors:
@@ -77,8 +78,8 @@ def handle_ribs():
 
     route_set.add(route_id)
     route_file.write("{rid}|{length}|Route\n".format(rid=route_id,length=len(as_path)))
-    route_rels_file.write("{rid}|{c}|HAS_COLLECTOR|null\n".format(rid=route_id,c=collector))
-    route_rels_file.write("{rid}|{p}|HAS_IP_BLOCK|null\n".format(rid=route_id,p=prefix))
+    route_rels_file.write("{rid}|{c}|HAS_COLLECTOR|0\n".format(rid=route_id,c=collector))
+    route_rels_file.write("{rid}|{p}|HAS_IP_BLOCK|0\n".format(rid=route_id,p=prefix))
     
     # Connection from collector to peer
     if(not as_path[0] in AS_set):
@@ -123,9 +124,15 @@ prev_rib_dump = 0
 while(stream.get_next_record(rec)):
 
   if rec.dump_time != prev_rib_dump:
+    dt = datetime.datetime.fromtimestamp(rec.dump_time)
+
+    time_file.write("{time}|{Y}|{M}|{D}|{h}|{m}|{s}|Time\n"
+        .format(time=rec.dump_time, 
+                Y=dt.year, M=dt.month, D=dt.day,
+                h=dt.hour, m=dt.minute, s=dt.second))
+    if(prev_rib_dump != 0):
+      time_rels_file.write("{t1}|{t2}|NEXT\n".format(t1=prev_rib_dump, t2=rec.dump_time)) 
     prev_rib_dump = rec.dump_time
-    time_file.write("{time}|TIME\n".format(time=rec.dump_time))
-    
     temp_route_set = set()
 
   handle_ribs()

@@ -15,7 +15,7 @@ for collector in collectors:
   stream.add_filter('collector', collector)
 stream.add_filter('record-type','ribs')
 stream.add_interval_filter(1438415400,1438416600)
-stream.add_filter('prefix', '8.0.0.0/8')
+#stream.add_filter('prefix', '8.8.0.0/16')
 
 stream.start()
 

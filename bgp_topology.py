@@ -10,11 +10,11 @@ import string
 stream = BGPStream()
 rec = BGPRecord()
 
-collectors = ['rrc01','rrc14','rrc15']
+collectors = ['rrc00', 'rrc01', 'rrc03', 'rrc04', 'rrc05']
 for collector in collectors:
   stream.add_filter('collector', collector)
 stream.add_filter('record-type','ribs')
-stream.add_interval_filter(1438415400,1438416600)
+stream.add_interval_filter(1475310000,1475340000)
 #stream.add_filter('prefix', '8.8.0.0/16')
 
 stream.start()
@@ -35,7 +35,7 @@ AS_file.write("ASN:ID|name|:LABEL\n")
 prefix_file.write("block:ID|:LABEL\n")
 route_file.write(":ID|length:int|:LABEL\n")
 connections_file.write(":ID|:LABEL\n")
-connect_rels_file.write(":START_ID|:END_ID|:TYPE|\n")
+connect_rels_file.write(":START_ID|:END_ID|count:int|:TYPE|\n")
 route_rels_file.write(":START_ID|:END_ID|:TYPE|\n")
 
 for collector in collectors:
@@ -48,6 +48,8 @@ prefix_set = set()
 connections_set = set()
 route_set = set()
 
+connections_count = dict()
+
 # Main loop
 route_id = None
 while(stream.get_next_record(rec)):
@@ -56,7 +58,6 @@ while(stream.get_next_record(rec)):
   while(elem):
     prefix  = elem.fields['prefix']
     as_path = elem.fields['as-path'].split(' ')
-    print as_path
 
     # Skip duplicate routes
     if route_id in route_set:
@@ -67,10 +68,15 @@ while(stream.get_next_record(rec)):
     if(not as_path[0] in AS_set):
       AS_set.add(as_path[0])
 
+    if as_path[0] == '':
+      elem = rec.get_next_elem()
+      continue
+
     pair = (collector,as_path[0])
     if(not pair in connections_set):
       connections_set.add(pair)
-      connect_rels_file.write("{c}|{asn}|TO\n".format(c=collector,asn=as_path[0]))
+      connect_rels_file.write("{c}|{asn}||VIEWS\n".format(c=collector,asn=as_path[0]))
+      
 
     for i in range(len(as_path)-1):
       # Skip AS path prepending
@@ -83,7 +89,9 @@ while(stream.get_next_record(rec)):
       pair = (as_path[i],as_path[i+1])
       if(not pair in connections_set):
         connections_set.add(pair)
-        connect_rels_file.write("{asn1}|{asn2}|TO\n".format(asn1=as_path[i],asn2=as_path[i+1]))
+        connections_count[pair] = 0
+        # connect_rels_file.write("{asn1}|{asn2}|TO\n".format(asn1=as_path[i],asn2=as_path[i+1]))
+      connections_count[pair] += 1
 
     # Connection to IP block
     if(not prefix in prefix_set):
@@ -91,7 +99,7 @@ while(stream.get_next_record(rec)):
       prefix_file.write("{pfx}|IP_Block\n".format(pfx=prefix))
     if(not (as_path[-1],prefix) in connections_set):
       connections_set.add((as_path[-1],prefix))
-      connect_rels_file.write("{asn}|{pfx}|ORIGINATES\n".format(asn=as_path[-1],pfx=prefix))
+      connect_rels_file.write("{asn}|{pfx}||ORIGINATES\n".format(asn=as_path[-1],pfx=prefix))
 
     elem = rec.get_next_elem()
 
@@ -101,12 +109,18 @@ for line in asnames_file:
   l = line.split(None, 1)
   asn = l[0].lstrip(string.ascii_letters)
   name = l[1].rstrip()
+  name = name.replace('|', '')
   if asn in AS_set:
     AS_file.write("{asn}|{name}|AS\n".format(asn = asn, name = name))
     AS_set.remove(asn)
 
 for asn in AS_set:
   AS_file.write("{asn}||AS\n".format(asn=asn))
+
+# Output connections with count
+for pair in connections_count:
+  connect_rels_file.write("{asn1}|{asn2}|{count}|TO\n".format(asn1=pair[0],asn2=pair[1], count=connections_count[pair]))
+
 
 AS_file.close()
 prefix_file.close()

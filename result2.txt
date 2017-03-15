@@ -1,0 +1,1228 @@
+/Users/alanmac/neo4j/bin/neo4j-shell -c < cypher/topology/metrics.cypher
+Welcome to the Neo4j Shell! Enter 'help' for a list of commands
+NOTE: Remote Neo4j graph database service 'shell' at port 1337
+
+neo4j-sh (?)$ // Various metrics of the graph
+neo4j-sh (?)$ 
+neo4j-sh (?)$ //AS with the most IP_Blocks
+neo4j-sh (?)$ match (a:AS)-[:ORIGINATES]->(b:IP_Block)
+> return a.ASN as ASN, a.name as Name, count(b) as Num_Blocks 
+> order by count(b) desc
+> limit 30;
++---------------------------------------------------------------------------------------------------------------------------+
+| ASN     | Name                                                                                               | Num_Blocks |
++---------------------------------------------------------------------------------------------------------------------------+
+| "701"   | "UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"                             | 2272       |
+| "1221"  | "ASN-TELSTRA Telstra Pty Ltd, AU"                                                                  | 1485       |
+| "3908"  | "CENTURYLINK-ASIA-LEGACY-QWEST - Qwest Communications Company, LLC, US"                            | 1118       |
+| "7018"  | "ATT-INTERNET4 - AT&T Services, Inc., US"                                                          | 1068       |
+| "702"   | "UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"                             | 909        |
+| "1"     | "LVLT-1 - Level 3 Communications, Inc., US"                                                        | 878        |
+| "7046"  | "RFC2270-UUNET-CUSTOMER - MCI Communications Services, Inc. d/b/a Verizon Business, US"            | 803        |
+| "1239"  | "SPRINTLINK - Sprint, US"                                                                          | 707        |
+| "1309"  | <null>                                                                                             | 694        |
+| "3967"  | "NSM350 - Nationstar Mortgage, LLC, US"                                                            | 615        |
+| "209"   | "CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"                              | 550        |
+| "2686"  | "ATGS-MMD-AS - AT&T Global Network Services, LLC, US"                                              | 540        |
+| "690"   | <null>                                                                                             | 516        |
+| "2914"  | "NTT-COMMUNICATIONS-2914 - NTT America, Inc., US"                                                  | 497        |
+| "4293"  | "CENTURYLINK-QC-MOE-DULUTH - Savvis, US"                                                           | 462        |
+| "781"   | "FR-RENATER-LOTHAIRE Reseaux Regionaux StanNet et AmperNet, EU"                                    | 452        |
+| "3301"  | "TELIANET-SWEDEN , SE"                                                                             | 441        |
+| "3561"  | "CENTURYLINK-LEGACY-SAVVIS - Savvis, US"                                                           | 419        |
+| "2764"  | "AAPT AAPT Limited, AU"                                                                            | 418        |
+| "703"   | "UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"                             | 410        |
+| "721"   | "DNIC-ASBLK-00721-00726 - DoD Network Information Center, US"                                      | 392        |
+| "2907"  | "SINET-AS Research Organization of Information and Systems, National Institute of Informatics, JP" | 390        |
+| "2548"  | <null>                                                                                             | 390        |
+| "2149"  | "COGENT-2149 - Cogent Communications, US"                                                          | 386        |
+| "4323"  | "TWTC - tw telecom holdings, inc., US"                                                             | 366        |
+| "3741"  | "IS, ZA"                                                                                           | 355        |
+| "5106"  | "WINPR - WinPR, Inc., PR"                                                                          | 355        |
+| "705"   | "UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"                             | 354        |
+| "577"   | "BACOM - Bell Canada, CA"                                                                          | 351        |
+| "15290" | "ALLST-15290 - Allstream Corp., CA"                                                                | 341        |
++---------------------------------------------------------------------------------------------------------------------------+
+30 rows
+268 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ //Distribution of IP Block advertisements
+neo4j-sh (?)$ match (a:AS)
+> optional match (a)-[:ORIGINATES]-(b:IP_Block)
+> with a as AS, count(b) as Num_Blocks
+> return Num_Blocks, count(AS) as Count
+> order by Num_Blocks;
++--------------------+
+| Num_Blocks | Count |
++--------------------+
+| 0          | 69    |
+| 1          | 4417  |
+| 2          | 1979  |
+| 3          | 1054  |
+| 4          | 752   |
+| 5          | 573   |
+| 6          | 392   |
+| 7          | 310   |
+| 8          | 290   |
+| 9          | 234   |
+| 10         | 172   |
+| 11         | 130   |
+| 12         | 121   |
+| 13         | 96    |
+| 14         | 104   |
+| 15         | 87    |
+| 16         | 73    |
+| 17         | 80    |
+| 18         | 62    |
+| 19         | 43    |
+| 20         | 47    |
+| 21         | 43    |
+| 22         | 39    |
+| 23         | 34    |
+| 24         | 34    |
+| 25         | 33    |
+| 26         | 29    |
+| 27         | 23    |
+| 28         | 30    |
+| 29         | 21    |
+| 30         | 24    |
+| 31         | 24    |
+| 32         | 21    |
+| 33         | 24    |
+| 34         | 18    |
+| 35         | 18    |
+| 36         | 17    |
+| 37         | 18    |
+| 38         | 14    |
+| 39         | 13    |
+| 40         | 6     |
+| 41         | 14    |
+| 42         | 8     |
+| 43         | 15    |
+| 44         | 12    |
+| 45         | 11    |
+| 46         | 6     |
+| 47         | 9     |
+| 48         | 6     |
+| 49         | 12    |
+| 50         | 9     |
+| 51         | 4     |
+| 52         | 9     |
+| 53         | 7     |
+| 54         | 7     |
+| 55         | 9     |
+| 56         | 7     |
+| 57         | 6     |
+| 58         | 6     |
+| 59         | 5     |
+| 60         | 6     |
+| 61         | 4     |
+| 62         | 3     |
+| 63         | 6     |
+| 64         | 5     |
+| 65         | 5     |
+| 66         | 2     |
+| 67         | 7     |
+| 68         | 6     |
+| 69         | 1     |
+| 70         | 6     |
+| 71         | 3     |
+| 72         | 4     |
+| 73         | 3     |
+| 74         | 8     |
+| 75         | 4     |
+| 76         | 3     |
+| 77         | 3     |
+| 78         | 4     |
+| 79         | 3     |
+| 80         | 4     |
+| 81         | 3     |
+| 82         | 3     |
+| 84         | 3     |
+| 85         | 3     |
+| 86         | 3     |
+| 87         | 1     |
+| 88         | 4     |
+| 89         | 2     |
+| 90         | 1     |
+| 91         | 3     |
+| 92         | 3     |
+| 93         | 1     |
+| 94         | 3     |
+| 95         | 1     |
+| 96         | 1     |
+| 97         | 1     |
+| 98         | 1     |
+| 99         | 2     |
+| 100        | 2     |
+| 101        | 2     |
+| 102        | 3     |
+| 103        | 4     |
+| 104        | 5     |
+| 105        | 4     |
+| 106        | 1     |
+| 107        | 2     |
+| 108        | 2     |
+| 109        | 2     |
+| 110        | 2     |
+| 112        | 2     |
+| 114        | 1     |
+| 115        | 1     |
+| 116        | 3     |
+| 117        | 1     |
+| 118        | 1     |
+| 120        | 1     |
+| 125        | 2     |
+| 126        | 2     |
+| 127        | 3     |
+| 129        | 1     |
+| 130        | 1     |
+| 132        | 1     |
+| 133        | 1     |
+| 135        | 2     |
+| 136        | 1     |
+| 138        | 1     |
+| 144        | 2     |
+| 145        | 1     |
+| 146        | 2     |
+| 147        | 1     |
+| 148        | 1     |
+| 149        | 1     |
+| 154        | 1     |
+| 155        | 2     |
+| 156        | 1     |
+| 161        | 1     |
+| 162        | 1     |
+| 164        | 1     |
+| 165        | 1     |
+| 168        | 1     |
+| 169        | 1     |
+| 172        | 2     |
+| 176        | 2     |
+| 178        | 1     |
+| 180        | 1     |
+| 181        | 1     |
+| 186        | 1     |
+| 187        | 1     |
+| 188        | 2     |
+| 191        | 1     |
+| 192        | 2     |
+| 195        | 1     |
+| 202        | 1     |
+| 204        | 1     |
+| 205        | 1     |
+| 209        | 1     |
+| 210        | 1     |
+| 212        | 2     |
+| 213        | 3     |
+| 215        | 1     |
+| 217        | 1     |
+| 220        | 1     |
+| 222        | 1     |
+| 226        | 1     |
+| 229        | 2     |
+| 230        | 1     |
+| 235        | 1     |
+| 237        | 1     |
+| 243        | 2     |
+| 244        | 1     |
+| 249        | 1     |
+| 256        | 1     |
+| 259        | 1     |
+| 269        | 1     |
+| 274        | 2     |
+| 277        | 1     |
+| 278        | 1     |
+| 279        | 2     |
+| 288        | 1     |
+| 290        | 1     |
+| 297        | 1     |
+| 298        | 1     |
+| 304        | 1     |
+| 312        | 2     |
+| 321        | 1     |
+| 325        | 1     |
+| 339        | 1     |
+| 340        | 1     |
+| 341        | 1     |
+| 351        | 1     |
+| 354        | 1     |
+| 355        | 2     |
+| 366        | 1     |
+| 386        | 1     |
+| 390        | 2     |
+| 392        | 1     |
+| 410        | 1     |
+| 418        | 1     |
+| 419        | 1     |
+| 441        | 1     |
+| 452        | 1     |
+| 462        | 1     |
+| 497        | 1     |
+| 516        | 1     |
+| 540        | 1     |
+| 550        | 1     |
+| 615        | 1     |
+| 694        | 1     |
+| 707        | 1     |
+| 803        | 1     |
+| 878        | 1     |
+| 909        | 1     |
+| 1068       | 1     |
+| 1118       | 1     |
+| 1485       | 1     |
+| 2272       | 1     |
++--------------------+
+217 rows
+201 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ //AS with most connections to other ASes
+neo4j-sh (?)$ match (a:AS)-[:TO]-(b:AS)
+> return a.ASN as ASN, a.name as Name, count(b) as Num_ASes
+> order by count(b) desc
+> limit 30;
++--------------------------------------------------------------------------------------------+
+| ASN    | Name                                                                   | Num_ASes |
++--------------------------------------------------------------------------------------------+
+| "701"  | "UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US" | 2438     |
+| "1239" | "SPRINTLINK - Sprint, US"                                              | 1297     |
+| "7018" | "ATT-INTERNET4 - AT&T Services, Inc., US"                              | 1037     |
+| "3561" | "CENTURYLINK-LEGACY-SAVVIS - Savvis, US"                               | 861      |
+| "209"  | "CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"  | 691      |
+| "1"    | "LVLT-1 - Level 3 Communications, Inc., US"                            | 497      |
+| "702"  | "UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US" | 477      |
+| "3549" | "LVLT-3549 - Level 3 Communications, Inc., US"                         | 450      |
+| "3356" | "LEVEL3 - Level 3 Communications, Inc., US"                            | 351      |
+| "3257" | "GTT-BACKBONE GTT, DE"                                                 | 344      |
+| "2914" | "NTT-COMMUNICATIONS-2914 - NTT America, Inc., US"                      | 339      |
+| "9057" | <null>                                                                 | 243      |
+| "6347" | <null>                                                                 | 241      |
+| "6461" | "ZAYO-6461 - Zayo Bandwidth Inc, US"                                   | 219      |
+| "6453" | "AS6453 - TATA COMMUNICATIONS (AMERICA) INC, US"                       | 202      |
+| "1755" | "AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"       | 173      |
+| "2548" | <null>                                                                 | 173      |
+| "4766" | "KIXS-AS-KR Korea Telecom, KR"                                         | 171      |
+| "8918" | "CARRIER1-AS , NL"                                                     | 166      |
+| "174"  | "COGENT-174 - Cogent Communications, US"                               | 161      |
+| "3303" | "SWISSCOM Swisscom (Switzerland) Ltd, CH"                              | 159      |
+| "721"  | "DNIC-ASBLK-00721-00726 - DoD Network Information Center, US"          | 152      |
+| "1273" | "CW Vodafone Group PLC, GB"                                            | 146      |
+| "3967" | "NSM350 - Nationstar Mortgage, LLC, US"                                | 139      |
+| "286"  | "KPN , NL"                                                             | 137      |
+| "8297" | <null>                                                                 | 135      |
+| "703"  | "UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US" | 133      |
+| "3786" | "LGDACOM LG DACOM Corporation, KR"                                     | 127      |
+| "5594" | "LHSYSHU Neumann Janos u. 1/E., HU"                                    | 118      |
+| "6762" | "SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"                        | 111      |
++--------------------------------------------------------------------------------------------+
+30 rows
+141 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ //Distribution of connections to other ASes
+neo4j-sh (?)$ match (a:AS)-[:TO]-(b:AS)
+> with a as AS, count(b) as Num_ASes
+> return Num_ASes, count(AS) as Count 
+> order by Num_ASes;
++------------------+
+| Num_ASes | Count |
++------------------+
+| 1        | 4818  |
+| 2        | 4651  |
+| 3        | 1131  |
+| 4        | 412   |
+| 5        | 219   |
+| 6        | 116   |
+| 7        | 98    |
+| 8        | 72    |
+| 9        | 64    |
+| 10       | 41    |
+| 11       | 36    |
+| 12       | 37    |
+| 13       | 28    |
+| 14       | 27    |
+| 15       | 16    |
+| 16       | 18    |
+| 17       | 20    |
+| 18       | 14    |
+| 19       | 11    |
+| 20       | 12    |
+| 21       | 11    |
+| 22       | 9     |
+| 23       | 6     |
+| 24       | 6     |
+| 25       | 6     |
+| 26       | 4     |
+| 27       | 5     |
+| 28       | 5     |
+| 29       | 4     |
+| 30       | 6     |
+| 31       | 5     |
+| 32       | 1     |
+| 33       | 2     |
+| 34       | 3     |
+| 35       | 2     |
+| 36       | 1     |
+| 38       | 3     |
+| 39       | 3     |
+| 40       | 3     |
+| 41       | 2     |
+| 42       | 3     |
+| 43       | 2     |
+| 44       | 2     |
+| 45       | 4     |
+| 46       | 2     |
+| 47       | 2     |
+| 48       | 1     |
+| 49       | 2     |
+| 50       | 2     |
+| 51       | 1     |
+| 52       | 2     |
+| 53       | 3     |
+| 54       | 3     |
+| 55       | 1     |
+| 56       | 1     |
+| 57       | 1     |
+| 61       | 1     |
+| 62       | 1     |
+| 64       | 1     |
+| 65       | 1     |
+| 67       | 2     |
+| 68       | 1     |
+| 71       | 1     |
+| 73       | 2     |
+| 76       | 2     |
+| 80       | 5     |
+| 81       | 1     |
+| 82       | 2     |
+| 83       | 1     |
+| 85       | 1     |
+| 86       | 1     |
+| 90       | 1     |
+| 96       | 1     |
+| 98       | 1     |
+| 101      | 2     |
+| 108      | 1     |
+| 111      | 2     |
+| 118      | 1     |
+| 127      | 1     |
+| 133      | 1     |
+| 135      | 1     |
+| 137      | 1     |
+| 139      | 1     |
+| 146      | 1     |
+| 152      | 1     |
+| 159      | 1     |
+| 161      | 1     |
+| 166      | 1     |
+| 171      | 1     |
+| 173      | 2     |
+| 202      | 1     |
+| 219      | 1     |
+| 241      | 1     |
+| 243      | 1     |
+| 339      | 1     |
+| 344      | 1     |
+| 351      | 1     |
+| 450      | 1     |
+| 477      | 1     |
+| 497      | 1     |
+| 691      | 1     |
+| 861      | 1     |
+| 1037     | 1     |
+| 1297     | 1     |
+| 2438     | 1     |
++------------------+
+105 rows
+110 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ //Average degree with other ASes
+neo4j-sh (?)$ match (a:AS)-[:TO]-(b:AS)
+> with a.ASN as ASN, count(b) as Num_ASes
+> return avg(Num_ASes) as Average_Degree;
++-------------------+
+| Average_Degree    |
++-------------------+
+| 3.714808652246259 |
++-------------------+
+1 row
+104 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ //Longest paths from collector to IP block
+neo4j-sh (?)$ //match (a:Collector), (b:IP_Block), path = shortestPath( (a)-[*]->(b))
+neo4j-sh (?)$ //return a.name as Collector, b.block as IP_Block, length(path)-1 as Length, node s(path) as Path
+neo4j-sh (?)$ //order by length(path) desc, IP_Block
+neo4j-sh (?)$ //limit 20;
+neo4j-sh (?)$ 
+neo4j-sh (?)$ //Distribution of distance of address blocks from collectors
+neo4j-sh (?)$ //match (a:Collector), (b:IP_Block), path = shortestPath( (a)-[*]->(b))
+neo4j-sh (?)$ //with a.name as Collector, b as IP_Block, length(path)-1 as Length
+neo4j-sh (?)$ //return Collector, Length, count(IP_Block) as Count 
+neo4j-sh (?)$ //order by Collector, Length;
+neo4j-sh (?)$ 
+neo4j-sh (?)$ //Distribution of distance of ASes from collectors
+neo4j-sh (?)$ match (a:Collector), (b:AS), path = shortestPath( (a)-[*]->(b))
+> with a.name as Collector, b, length(path)-1 as Length
+> return Collector, Length, count(b) as Count 
+> order by Collector, Length;
++----------------------------+
+| Collector | Length | Count |
++----------------------------+
+| "rrc01"   | 0      | 39    |
+| "rrc01"   | 1      | 1389  |
+| "rrc01"   | 2      | 7837  |
+| "rrc01"   | 3      | 2433  |
+| "rrc01"   | 4      | 309   |
+| "rrc01"   | 5      | 11    |
+| "rrc01"   | 6      | 1     |
+| "rrc03"   | 0      | 30    |
+| "rrc03"   | 1      | 777   |
+| "rrc03"   | 2      | 7792  |
+| "rrc03"   | 3      | 2992  |
+| "rrc03"   | 4      | 411   |
+| "rrc03"   | 5      | 17    |
+| "rrc03"   | 6      | 1     |
+| "rrc04"   | 0      | 8     |
+| "rrc04"   | 1      | 249   |
+| "rrc04"   | 2      | 5850  |
+| "rrc04"   | 3      | 5074  |
+| "rrc04"   | 4      | 767   |
+| "rrc04"   | 5      | 68    |
+| "rrc04"   | 6      | 3     |
+| "rrc05"   | 0      | 28    |
+| "rrc05"   | 1      | 236   |
+| "rrc05"   | 2      | 2049  |
+| "rrc05"   | 3      | 7720  |
+| "rrc05"   | 4      | 1816  |
+| "rrc05"   | 5      | 160   |
+| "rrc05"   | 6      | 9     |
+| "rrc05"   | 7      | 1     |
++----------------------------+
+29 rows
+1810 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ // In-degree vs out-degree of each AS
+neo4j-sh (?)$ match (a:AS)
+> optional match (a)-[:TO]->(out:AS)
+> with a, count(out) as out_degree
+> optional match (a)<-[:TO]-(in:AS)
+> return a as AS, out_degree, count(in) as in_degree
+> order by in_degree - out_degree desc
+> limit 30;
++-----------------------------------------------------------------------------------------------------------------------------------+
+| AS                                                                                                       | out_degree | in_degree |
++-----------------------------------------------------------------------------------------------------------------------------------+
+| Node[9356]{ASN:"8153"}                                                                                   | 0          | 12        |
+| Node[9498]{ASN:"4355"}                                                                                   | 0          | 12        |
+| Node[9904]{ASN:"6432"}                                                                                   | 0          | 11        |
+| Node[692]{ASN:"3573",name:"ACCENTURE - Accenture LLP, US"}                                               | 0          | 10        |
+| Node[201]{ASN:"1200",name:"AMS-IX1 , NL"}                                                                | 0          | 10        |
+| Node[1883]{ASN:"8068",name:"MICROSOFT-CORP-MSN-AS-BLOCK - Microsoft Corporation, US"}                    | 1          | 11        |
+| Node[1884]{ASN:"8070",name:"MICROSOFT-CORP-MSN-AS-BLOCK - Microsoft Corporation, US"}                    | 1          | 10        |
+| Node[2364]{ASN:"9143",name:"ZIGGO Ziggo B.V., NL"}                                                       | 0          | 9         |
+| Node[1071]{ASN:"5459",name:"LINX-AS London interconnection point, GB"}                                   | 0          | 9         |
+| Node[3850]{ASN:"12222",name:"AKAMAI - Akamai Technologies, Inc., US"}                                    | 0          | 9         |
+| Node[9204]{ASN:"15385"}                                                                                  | 1          | 9         |
+| Node[997]{ASN:"4983",name:"INTEL-SC-AS - Intel Corporation, US"}                                         | 0          | 8         |
+| Node[65]{ASN:"109",name:"CISCOSYSTEMS - Cisco Systems, Inc., US"}                                        | 0          | 8         |
+| Node[77]{ASN:"151",name:"IND-NTC-AS - Hewlett-Packard Company, US"}                                      | 0          | 8         |
+| Node[1735]{ASN:"7633",name:"SOFTNET-AS-AP Software Technology Parks of India - Bangalore, IN"}           | 0          | 8         |
+| Node[4496]{ASN:"13445",name:"13445 - Cisco Webex LLC, US"}                                               | 0          | 8         |
+| Node[355]{ASN:"1889",name:"HP-EUROPE-AS Hewlett Packard Europe S.A.S., US"}                              | 0          | 8         |
+| Node[492]{ASN:"2647",name:"SITA , FR"}                                                                   | 2          | 10        |
+| Node[6368]{ASN:"17159",name:"LNT-INFOTECH-FSTI - L&T Infotech Financial Services Technologies Inc., CA"} | 0          | 7         |
+| Node[3050]{ASN:"10627",name:"CP-AS-AS10627 - Critical Path Inc., US"}                                    | 0          | 7         |
+| Node[2106]{ASN:"8586",name:"OBSL-AS TalkTalk - Business division, GB"}                                   | 1          | 8         |
+| Node[11526]{ASN:"752"}                                                                                   | 0          | 7         |
+| Node[10163]{ASN:"7462"}                                                                                  | 0          | 7         |
+| Node[3440]{ASN:"11492",name:"CABLEONE - CABLE ONE, INC., US"}                                            | 0          | 7         |
+| Node[1048]{ASN:"5401",name:"ASN-CLUENET , DE"}                                                           | 0          | 7         |
+| Node[602]{ASN:"3265",name:"XS4ALL-NL Amsterdam, NL"}                                                     | 0          | 7         |
+| Node[6261]{ASN:"16922",name:"OUHSC-EDU - University of Oklahoma HSC, US"}                                | 0          | 6         |
+| Node[5567]{ASN:"15562",name:"SNIJDERS , NL"}                                                             | 1          | 7         |
+| Node[8728]{ASN:"12076"}                                                                                  | 0          | 6         |
+| Node[3242]{ASN:"11101",name:"PALMETTOHEALTHAS - Palmetto Health, US"}                                    | 0          | 6         |
++-----------------------------------------------------------------------------------------------------------------------------------+
+30 rows
+128 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ // Show number of times a connection appears in the routing
+neo4j-sh (?)$ match (a:AS)-[r:TO]->(b:AS)
+> return a, b, r.count
+> order by r.count desc
+> limit 100;
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| a                                                                                                | b                                                                                                                             | r.count |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                             | Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}                                | 276632  |
+| Node[1504]{ASN:"6893",name:"SAITIS-NETWORK , CH"}                                                | Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                                                           | 172845  |
+| Node[129]{ASN:"513",name:"CERN , CH"}                                                            | Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}                                | 157034  |
+| Node[11647]{ASN:"9057"}                                                                          | Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                                                        | 142687  |
+| Node[635]{ASN:"3333",name:"RIPE-NCC-AS , NL"}                                                    | Node[11647]{ASN:"9057"}                                                                                                       | 137548  |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 92413   |
+| Node[1450]{ASN:"6762",name:"SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"}                      | Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                                                     | 88360   |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                | Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 68311   |
+| Node[1450]{ASN:"6762",name:"SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"}                      | Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 68071   |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 51199   |
+| Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                           | Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 42619   |
+| Node[635]{ASN:"3333",name:"RIPE-NCC-AS , NL"}                                                    | Node[191]{ASN:"1103",name:"SURFNET-NL SURFnet, The Netherlands, NL"}                                                          | 39605   |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[1544]{ASN:"7018",name:"ATT-INTERNET4 - AT&T Services, Inc., US"}                                                         | 39548   |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[11077]{ASN:"568"}                                                                                                        | 38663   |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[213]{ASN:"1239",name:"SPRINTLINK - Sprint, US"}                                                                          | 36702   |
+| Node[349]{ASN:"1853",name:"ACONET ACOnet Backbone, AT"}                                          | Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}                                   | 32883   |
+| Node[11077]{ASN:"568"}                                                                           | Node[163]{ASN:"721",name:"DNIC-ASBLK-00721-00726 - DoD Network Information Center, US"}                                       | 29581   |
+| Node[894]{ASN:"4637",name:"ASN-TELSTRA-GLOBAL Telstra Global, HK"}                               | Node[208]{ASN:"1221",name:"ASN-TELSTRA Telstra Pty Ltd, AU"}                                                                  | 28782   |
+| Node[1437]{ASN:"6730",name:"SUNRISE , CH"}                                                       | Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 25564   |
+| Node[191]{ASN:"1103",name:"SURFNET-NL SURFnet, The Netherlands, NL"}                             | Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                                                     | 23633   |
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"} | Node[157]{ASN:"703",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 22145   |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                                                           | 21616   |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                | Node[1544]{ASN:"7018",name:"ATT-INTERNET4 - AT&T Services, Inc., US"}                                                         | 21459   |
+| Node[10681]{ASN:"8933"}                                                                          | Node[615]{ASN:"3300",name:"BT , NL"}                                                                                          | 21397   |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                        | Node[213]{ASN:"1239",name:"SPRINTLINK - Sprint, US"}                                                                          | 19196   |
+| Node[1450]{ASN:"6762",name:"SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"}                      | Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}                                   | 18978   |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | Node[213]{ASN:"1239",name:"SPRINTLINK - Sprint, US"}                                                                          | 17244   |
+| Node[137]{ASN:"559",name:"SWITCH Peering requests: <peering@switch.ch>, CH"}                     | Node[10681]{ASN:"8933"}                                                                                                       | 16614   |
+| Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                           | Node[213]{ASN:"1239",name:"SPRINTLINK - Sprint, US"}                                                                          | 16424   |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                | Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}                                | 16173   |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[894]{ASN:"4637",name:"ASN-TELSTRA-GLOBAL Telstra Global, HK"}                                                            | 14656   |
+| Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}      | Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 13861   |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[5]{ASN:"1",name:"LVLT-1 - Level 3 Communications, Inc., US"}                                                             | 13852   |
+| Node[342]{ASN:"1836",name:"GREEN green.ch AG Autonomous System, CH"}                             | Node[109]{ASN:"286",name:"KPN , NL"}                                                                                          | 13405   |
+| Node[137]{ASN:"559",name:"SWITCH Peering requests: <peering@switch.ch>, CH"}                     | Node[1437]{ASN:"6730",name:"SUNRISE , CH"}                                                                                    | 12839   |
+| Node[10371]{ASN:"8709"}                                                                          | Node[788]{ASN:"3967",name:"NSM350 - Nationstar Mortgage, LLC, US"}                                                            | 12676   |
+| Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}      | Node[109]{ASN:"286",name:"KPN , NL"}                                                                                          | 12482   |
+| Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                           | Node[1544]{ASN:"7018",name:"ATT-INTERNET4 - AT&T Services, Inc., US"}                                                         | 12230   |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                | Node[5]{ASN:"1",name:"LVLT-1 - Level 3 Communications, Inc., US"}                                                             | 12118   |
+| Node[357]{ASN:"1901",name:"EUNETAT-AS A1 Telekom Austria AG, AT"}                                | Node[109]{ASN:"286",name:"KPN , NL"}                                                                                          | 12061   |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                        | Node[1544]{ASN:"7018",name:"ATT-INTERNET4 - AT&T Services, Inc., US"}                                                         | 11265   |
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"} | Node[213]{ASN:"1239",name:"SPRINTLINK - Sprint, US"}                                                                          | 11036   |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | Node[1544]{ASN:"7018",name:"ATT-INTERNET4 - AT&T Services, Inc., US"}                                                         | 10318   |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[948]{ASN:"4766",name:"KIXS-AS-KR Korea Telecom, KR"}                                                                     | 9948    |
+| Node[129]{ASN:"513",name:"CERN , CH"}                                                            | Node[1437]{ASN:"6730",name:"SUNRISE , CH"}                                                                                    | 9934    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[1344]{ASN:"6453",name:"AS6453 - TATA COMMUNICATIONS (AMERICA) INC, US"}                                                  | 9597    |
+| Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                           | Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                                                           | 9552    |
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"} | Node[1551]{ASN:"7046",name:"RFC2270-UUNET-CUSTOMER - MCI Communications Services, Inc. d/b/a Verizon Business, US"}           | 9526    |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | Node[1665]{ASN:"7474",name:"OPTUSCOM-AS01-AU SingTel Optus Pty Ltd, AU"}                                                      | 9459    |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                        | Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}                                | 9314    |
+| Node[226]{ASN:"1299",name:"TELIANET , SE"}                                                       | Node[616]{ASN:"3301",name:"TELIANET-SWEDEN , SE"}                                                                             | 9288    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[449]{ASN:"2516",name:"KDDI KDDI CORPORATION, JP"}                                                                        | 9177    |
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"} | Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                                                           | 9072    |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}                                | 8937    |
+| Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}      | Node[1094]{ASN:"5511",name:"OPENTRANSIT , FR"}                                                                                | 8899    |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                | Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                                                     | 8860    |
+| Node[1094]{ASN:"5511",name:"OPENTRANSIT , FR"}                                                   | Node[948]{ASN:"4766",name:"KIXS-AS-KR Korea Telecom, KR"}                                                                     | 8842    |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                        | Node[899]{ASN:"4648",name:"SPARK-NZ Global-Gateway Internet, NZ"}                                                             | 8720    |
+| Node[948]{ASN:"4766",name:"KIXS-AS-KR Korea Telecom, KR"}                                        | Node[703]{ASN:"3608",name:"KRC-AS-KR Korea Rural Community Corporation, KR"}                                                  | 8663    |
+| Node[1450]{ASN:"6762",name:"SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"}                      | Node[1344]{ASN:"6453",name:"AS6453 - TATA COMMUNICATIONS (AMERICA) INC, US"}                                                  | 8606    |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | Node[5]{ASN:"1",name:"LVLT-1 - Level 3 Communications, Inc., US"}                                                             | 8551    |
+| Node[1504]{ASN:"6893",name:"SAITIS-NETWORK , CH"}                                                | Node[221]{ASN:"1273",name:"CW Vodafone Group PLC, GB"}                                                                        | 8480    |
+| Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"} | Node[362]{ASN:"1913",name:"DNIC-ASBLK-01910-01914 - DoD Network Information Center, US"}                                      | 8432    |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                             | Node[4329]{ASN:"13126",name:"SMS-UK-NET , NL"}                                                                                | 8152    |
+| Node[899]{ASN:"4648",name:"SPARK-NZ Global-Gateway Internet, NZ"}                                | Node[513]{ASN:"2764",name:"AAPT AAPT Limited, AU"}                                                                            | 8058    |
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"} | Node[8427]{ASN:"690"}                                                                                                         | 7928    |
+| Node[1504]{ASN:"6893",name:"SAITIS-NETWORK , CH"}                                                | Node[2268]{ASN:"8938",name:"ENERGIS-IP , CH"}                                                                                 | 7877    |
+| Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                           | Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}                                | 7820    |
+| Node[635]{ASN:"3333",name:"RIPE-NCC-AS , NL"}                                                    | Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 7690    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                                                     | 7686    |
+| Node[349]{ASN:"1853",name:"ACONET ACOnet Backbone, AT"}                                          | Node[1348]{ASN:"6461",name:"ZAYO-6461 - Zayo Bandwidth Inc, US"}                                                              | 7573    |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                        | Node[894]{ASN:"4637",name:"ASN-TELSTRA-GLOBAL Telstra Global, HK"}                                                            | 7559    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[140]{ASN:"577",name:"BACOM - Bell Canada, CA"}                                                                           | 7420    |
+| Node[137]{ASN:"559",name:"SWITCH Peering requests: <peering@switch.ch>, CH"}                     | Node[11399]{ASN:"9010"}                                                                                                       | 7393    |
+| Node[349]{ASN:"1853",name:"ACONET ACOnet Backbone, AT"}                                          | Node[10681]{ASN:"8933"}                                                                                                       | 7372    |
+| Node[11399]{ASN:"9010"}                                                                          | Node[3464]{ASN:"11537",name:"ABILENE - Internet2, US"}                                                                        | 7133    |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                        | Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                                                           | 6871    |
+| Node[11392]{ASN:"11908"}                                                                         | Node[8670]{ASN:"10530"}                                                                                                       | 6799    |
+| Node[129]{ASN:"513",name:"CERN , CH"}                                                            | Node[1094]{ASN:"5511",name:"OPENTRANSIT , FR"}                                                                                | 6793    |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                             | Node[130]{ASN:"517",name:"Darmstaedter Landstrasse 184, NL"}                                                                  | 6737    |
+| Node[129]{ASN:"513",name:"CERN , CH"}                                                            | Node[10681]{ASN:"8933"}                                                                                                       | 6731    |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | Node[1094]{ASN:"5511",name:"OPENTRANSIT , FR"}                                                                                | 6699    |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                             | Node[342]{ASN:"1836",name:"GREEN green.ch AG Autonomous System, CH"}                                                          | 6603    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[549]{ASN:"2914",name:"NTT-COMMUNICATIONS-2914 - NTT America, Inc., US"}                                                  | 6550    |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                | Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 6481    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[1254]{ASN:"6140",name:"TWO-P - Two P, US"}                                                                               | 6441    |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                             | Node[615]{ASN:"3300",name:"BT , NL"}                                                                                          | 6397    |
+| Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}      | Node[1450]{ASN:"6762",name:"SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"}                                                   | 6323    |
+| Node[129]{ASN:"513",name:"CERN , CH"}                                                            | Node[417]{ASN:"2200",name:"FR-RENATER Reseau National de telecommunications pour la Technologie, FR"}                         | 6242    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[390]{ASN:"2048",name:"LANET-1 - State of Louisiana Office of Telecommunications Management, US"}                         | 6112    |
+| Node[163]{ASN:"721",name:"DNIC-ASBLK-00721-00726 - DoD Network Information Center, US"}          | Node[1219]{ASN:"5972",name:"DNIC-ASBLK-05800-06055 - DoD Network Information Center, US"}                                     | 6086    |
+| Node[549]{ASN:"2914",name:"NTT-COMMUNICATIONS-2914 - NTT America, Inc., US"}                     | Node[548]{ASN:"2907",name:"SINET-AS Research Organization of Information and Systems, National Institute of Informatics, JP"} | 6049    |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                | Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                                                        | 6010    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[11269]{ASN:"6995"}                                                                                                       | 5920    |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                             | Node[1133]{ASN:"5606",name:"KQRO Bucharest ROMANIA, RO"}                                                                      | 5913    |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 5866    |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | Node[10660]{ASN:"2548"}                                                                                                       | 5826    |
+| Node[1504]{ASN:"6893",name:"SAITIS-NETWORK , CH"}                                                | Node[1126]{ASN:"5594",name:"LHSYSHU Neumann Janos u. 1/E., HU"}                                                               | 5735    |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                             | Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                                                     | 5714    |
+| Node[1055]{ASN:"5413",name:"AS5413 , GB"}                                                        | Node[517]{ASN:"2828",name:"XO-AS15 - XO Communications, US"}                                                                  | 5705    |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+100 rows
+83 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ // Number of times an AS appears in the routing
+neo4j-sh (?)$ match (a:AS)-[r:TO]-()
+> return a, sum(r.count) as count
+> order by count desc
+> limit 100;
++----------------------------------------------------------------------------------------------------------------------------------------+
+| a                                                                                                                             | count  |
++----------------------------------------------------------------------------------------------------------------------------------------+
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}                                | 950988 |
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 623548 |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                                                           | 449830 |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                                                          | 437008 |
+| Node[11647]{ASN:"9057"}                                                                                                       | 337589 |
+| Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                                                        | 320334 |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                                                     | 286710 |
+| Node[1450]{ASN:"6762",name:"SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"}                                                   | 232763 |
+| Node[129]{ASN:"513",name:"CERN , CH"}                                                                                         | 216400 |
+| Node[635]{ASN:"3333",name:"RIPE-NCC-AS , NL"}                                                                                 | 214555 |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                                             | 213122 |
+| Node[1504]{ASN:"6893",name:"SAITIS-NETWORK , CH"}                                                                             | 212887 |
+| Node[213]{ASN:"1239",name:"SPRINTLINK - Sprint, US"}                                                                          | 204868 |
+| Node[1544]{ASN:"7018",name:"ATT-INTERNET4 - AT&T Services, Inc., US"}                                                         | 173468 |
+| Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}                                   | 155828 |
+| Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 120073 |
+| Node[1094]{ASN:"5511",name:"OPENTRANSIT , FR"}                                                                                | 97089  |
+| Node[191]{ASN:"1103",name:"SURFNET-NL SURFnet, The Netherlands, NL"}                                                          | 80216  |
+| Node[5]{ASN:"1",name:"LVLT-1 - Level 3 Communications, Inc., US"}                                                             | 79326  |
+| Node[11077]{ASN:"568"}                                                                                                        | 75916  |
+| Node[10681]{ASN:"8933"}                                                                                                       | 75880  |
+| Node[615]{ASN:"3300",name:"BT , NL"}                                                                                          | 70478  |
+| Node[894]{ASN:"4637",name:"ASN-TELSTRA-GLOBAL Telstra Global, HK"}                                                            | 66754  |
+| Node[549]{ASN:"2914",name:"NTT-COMMUNICATIONS-2914 - NTT America, Inc., US"}                                                  | 63317  |
+| Node[1344]{ASN:"6453",name:"AS6453 - TATA COMMUNICATIONS (AMERICA) INC, US"}                                                  | 59965  |
+| Node[349]{ASN:"1853",name:"ACONET ACOnet Backbone, AT"}                                                                       | 58880  |
+| Node[1437]{ASN:"6730",name:"SUNRISE , CH"}                                                                                    | 55294  |
+| Node[137]{ASN:"559",name:"SWITCH Peering requests: <peering@switch.ch>, CH"}                                                  | 54649  |
+| Node[1348]{ASN:"6461",name:"ZAYO-6461 - Zayo Bandwidth Inc, US"}                                                              | 52472  |
+| Node[163]{ASN:"721",name:"DNIC-ASBLK-00721-00726 - DoD Network Information Center, US"}                                       | 52329  |
+| Node[948]{ASN:"4766",name:"KIXS-AS-KR Korea Telecom, KR"}                                                                     | 51430  |
+| Node[226]{ASN:"1299",name:"TELIANET , SE"}                                                                                    | 46212  |
+| Node[84]{ASN:"174",name:"COGENT-174 - Cogent Communications, US"}                                                             | 44800  |
+| Node[342]{ASN:"1836",name:"GREEN green.ch AG Autonomous System, CH"}                                                          | 40300  |
+| Node[157]{ASN:"703",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                              | 39534  |
+| Node[788]{ASN:"3967",name:"NSM350 - Nationstar Mortgage, LLC, US"}                                                            | 37420  |
+| Node[3464]{ASN:"11537",name:"ABILENE - Internet2, US"}                                                                        | 34814  |
+| Node[208]{ASN:"1221",name:"ASN-TELSTRA Telstra Pty Ltd, AU"}                                                                  | 34315  |
+| Node[221]{ASN:"1273",name:"CW Vodafone Group PLC, GB"}                                                                        | 28663  |
+| Node[10660]{ASN:"2548"}                                                                                                       | 27721  |
+| Node[449]{ASN:"2516",name:"KDDI KDDI CORPORATION, JP"}                                                                        | 26364  |
+| Node[618]{ASN:"3303",name:"SWISSCOM Swisscom (Switzerland) Ltd, CH"}                                                          | 25796  |
+| Node[1664]{ASN:"7473",name:"SINGTEL-AS-AP Singapore Telecommunications Ltd, SG"}                                              | 24862  |
+| Node[4329]{ASN:"13126",name:"SMS-UK-NET , NL"}                                                                                | 24620  |
+| Node[140]{ASN:"577",name:"BACOM - Bell Canada, CA"}                                                                           | 24032  |
+| Node[8363]{ASN:"8297"}                                                                                                        | 23064  |
+| Node[11392]{ASN:"11908"}                                                                                                      | 22574  |
+| Node[517]{ASN:"2828",name:"XO-AS15 - XO Communications, US"}                                                                  | 21166  |
+| Node[357]{ASN:"1901",name:"EUNETAT-AS A1 Telekom Austria AG, AT"}                                                             | 21013  |
+| Node[4233]{ASN:"12956",name:"TELEFONICA Telefonica Wholesale Network, ES"}                                                    | 20252  |
+| Node[10371]{ASN:"8709"}                                                                                                       | 20110  |
+| Node[11489]{ASN:"6347"}                                                                                                       | 19930  |
+| Node[2268]{ASN:"8938",name:"ENERGIS-IP , CH"}                                                                                 | 19697  |
+| Node[362]{ASN:"1913",name:"DNIC-ASBLK-01910-01914 - DoD Network Information Center, US"}                                      | 19592  |
+| Node[1665]{ASN:"7474",name:"OPTUSCOM-AS01-AU SingTel Optus Pty Ltd, AU"}                                                      | 19212  |
+| Node[899]{ASN:"4648",name:"SPARK-NZ Global-Gateway Internet, NZ"}                                                             | 18188  |
+| Node[1047]{ASN:"5400",name:"BT , GB"}                                                                                         | 18055  |
+| Node[703]{ASN:"3608",name:"KRC-AS-KR Korea Rural Community Corporation, KR"}                                                  | 17882  |
+| Node[771]{ASN:"3908",name:"CENTURYLINK-ASIA-LEGACY-QWEST - Qwest Communications Company, LLC, US"}                            | 17648  |
+| Node[2257]{ASN:"8918",name:"CARRIER1-AS , NL"}                                                                                | 17262  |
+| Node[417]{ASN:"2200",name:"FR-RENATER Reseau National de telecommunications pour la Technologie, FR"}                         | 17042  |
+| Node[873]{ASN:"4565",name:"MEGAPATH2-US - MegaPath Networks Inc., US"}                                                        | 16634  |
+| Node[11399]{ASN:"9010"}                                                                                                       | 16258  |
+| Node[803]{ASN:"4134",name:"CHINANET-BACKBONE No.31,Jin-rong Street, CN"}                                                      | 15218  |
+| Node[1126]{ASN:"5594",name:"LHSYSHU Neumann Janos u. 1/E., HU"}                                                               | 15014  |
+| Node[627]{ASN:"3320",name:"DTAG Internet service provider operations, DE"}                                                    | 14922  |
+| Node[1254]{ASN:"6140",name:"TWO-P - Two P, US"}                                                                               | 13926  |
+| Node[1055]{ASN:"5413",name:"AS5413 , GB"}                                                                                     | 13116  |
+| Node[130]{ASN:"517",name:"Darmstaedter Landstrasse 184, NL"}                                                                  | 12979  |
+| Node[479]{ASN:"2603",name:"NORDUNET , NO"}                                                                                    | 12920  |
+| Node[940]{ASN:"4755",name:"TATACOMM-AS TATA Communications formerly VSNL is Leading ISP, IN"}                                 | 12863  |
+| Node[5424]{ASN:"15290",name:"ALLST-15290 - Allstream Corp., CA"}                                                              | 12226  |
+| Node[326]{ASN:"1759",name:"TSF-IP-CORE http://www.teliasonera.com, looking-glass lg.sonera.net, FI"}                          | 11846  |
+| Node[548]{ASN:"2907",name:"SINET-AS Research Organization of Information and Systems, National Institute of Informatics, JP"} | 11609  |
+| Node[165]{ASN:"724",name:"DNIC-ASBLK-00721-00726 - DoD Network Information Center, US"}                                       | 11505  |
+| Node[8670]{ASN:"10530"}                                                                                                       | 11199  |
+| Node[513]{ASN:"2764",name:"AAPT AAPT Limited, AU"}                                                                            | 11152  |
+| Node[3143]{ASN:"10910",name:"INTERNAP-BLK - Internap Network Services Corporation, US"}                                       | 11008  |
+| Node[1133]{ASN:"5606",name:"KQRO Bucharest ROMANIA, RO"}                                                                      | 10842  |
+| Node[11495]{ASN:"8210"}                                                                                                       | 10382  |
+| Node[1219]{ASN:"5972",name:"DNIC-ASBLK-05800-06055 - DoD Network Information Center, US"}                                     | 10072  |
+| Node[1367]{ASN:"6509",name:"CANARIE-NTN - Canarie Inc, CA"}                                                                   | 9932   |
+| Node[616]{ASN:"3301",name:"TELIANET-SWEDEN , SE"}                                                                             | 9816   |
+| Node[1936]{ASN:"8220",name:"COLT , GB"}                                                                                       | 9810   |
+| Node[1838]{ASN:"7911",name:"LVLT-7911 - Level 3 Communications, Inc., US"}                                                    | 9716   |
+| Node[8427]{ASN:"690"}                                                                                                         | 9682   |
+| Node[1551]{ASN:"7046",name:"RFC2270-UUNET-CUSTOMER - MCI Communications Services, Inc. d/b/a Verizon Business, US"}           | 9600   |
+| Node[198]{ASN:"1136",name:"KPN This macro reflects our filtering-policy on, NL"}                                              | 9278   |
+| Node[1259]{ASN:"6172",name:"MUSD-INTERNET - Mesa Public Schools, US"}                                                         | 9088   |
+| Node[1153]{ASN:"5650",name:"FRONTIER-FRTR - Frontier Communications of America, Inc., US"}                                    | 9038   |
+| Node[7092]{ASN:"19244",name:"Telmex USA, US"}                                                                                 | 9038   |
+| Node[3097]{ASN:"10764",name:"STARTAP - National Center for Supercomputing Applications, US"}                                  | 9014   |
+| Node[9873]{ASN:"9225"}                                                                                                        | 8974   |
+| Node[1619]{ASN:"7303",name:"Telecom Argentina S.A., AR"}                                                                      | 8964   |
+| Node[9462]{ASN:"4513"}                                                                                                        | 8514   |
+| Node[838]{ASN:"4323",name:"TWTC - tw telecom holdings, inc., US"}                                                             | 8429   |
+| Node[1997]{ASN:"8342",name:"RTCOMM-AS , RU"}                                                                                  | 8292   |
+| Node[333]{ASN:"1785",name:"AS-PAETEC-NET - PaeTec Communications, Inc., US"}                                                  | 7930   |
+| Node[9316]{ASN:"7984"}                                                                                                        | 7868   |
+| Node[1376]{ASN:"6539",name:"GT-BELL - Bell Canada, CA"}                                                                       | 7864   |
++----------------------------------------------------------------------------------------------------------------------------------------+
+100 rows
+109 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ // Local clustering coefficient of each AS
+neo4j-sh (?)$ match (node:AS)-[:TO]-(neighbor:AS)
+> with node, count(neighbor) as degree
+> match (n1:AS)-[:TO]-(node)-[:TO]-(n2:AS)
+> where exists((n1)-[:TO]-(n2))
+> with node, degree, count(*)/2 as edges
+> return node, degree, edges, toFloat(edges) / (degree * (degree-1) / 2) as clustering
+> limit 100;
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| node                                                                                              | degree | edges | clustering           |
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| Node[9325]{ASN:"13196"}                                                                           | 3      | 1     | 0.3333333333333333   |
+| Node[2199]{ASN:"8803",name:"MIGROS , CH"}                                                         | 2      | 1     | 1.0                  |
+| Node[4407]{ASN:"13280",name:", IE"}                                                               | 2      | 1     | 1.0                  |
+| Node[9654]{ASN:"14544"}                                                                           | 2      | 1     | 1.0                  |
+| Node[3418]{ASN:"11439",name:"CANERIS - Caneris Inc., CA"}                                         | 3      | 2     | 0.6666666666666666   |
+| Node[9312]{ASN:"13442"}                                                                           | 2      | 1     | 1.0                  |
+| Node[2926]{ASN:"10235",name:"NATIONAL-AUSTRALIA-BANK National Australia Bank Ltd Network, AU"}    | 2      | 1     | 1.0                  |
+| Node[3391]{ASN:"11383",name:"XAND - Xand Corporation, US"}                                        | 2      | 1     | 1.0                  |
+| Node[3268]{ASN:"11169",name:"SECUREFOUNDATIONS - Secure Foundations, US"}                         | 3      | 2     | 0.6666666666666666   |
+| Node[10964]{ASN:"7688"}                                                                           | 2      | 1     | 1.0                  |
+| Node[11120]{ASN:"10635"}                                                                          | 2      | 1     | 1.0                  |
+| Node[1453]{ASN:"6769",name:"SICN , LT"}                                                           | 2      | 1     | 1.0                  |
+| Node[1456]{ASN:"6774",name:"ASN-BICS , BE"}                                                       | 11     | 21    | 0.38181818181818183  |
+| Node[2221]{ASN:"8851",name:"EDGE t/a GCI Com, GB"}                                                | 6      | 5     | 0.3333333333333333   |
+| Node[11430]{ASN:"10827"}                                                                          | 8      | 2     | 0.07142857142857142  |
+| Node[9154]{ASN:"19777"}                                                                           | 2      | 1     | 1.0                  |
+| Node[9367]{ASN:"11369"}                                                                           | 2      | 1     | 1.0                  |
+| Node[9126]{ASN:"8964"}                                                                            | 3      | 1     | 0.3333333333333333   |
+| Node[6161]{ASN:"16747",name:"REAL-TIME - Real Time Enterprises, Inc., US"}                        | 2      | 1     | 1.0                  |
+| Node[10651]{ASN:"14927"}                                                                          | 2      | 1     | 1.0                  |
+| Node[3000]{ASN:"10453",name:"CNIWEB - CREATIVE NETWORK INNOVATIONS, INC., US"}                    | 2      | 1     | 1.0                  |
+| Node[11348]{ASN:"19628"}                                                                          | 2      | 1     | 1.0                  |
+| Node[5785]{ASN:"15978",name:"Lausanne Switzerland, EU"}                                           | 2      | 1     | 1.0                  |
+| Node[7267]{ASN:"19631",name:"TRAVELPORT - Travelport Operations, Inc., US"}                       | 2      | 1     | 1.0                  |
+| Node[6263]{ASN:"16927",name:"IHOP-KC - International House of Prayer, US"}                        | 2      | 1     | 1.0                  |
+| Node[6273]{ASN:"16946",name:"OBLONG - OBLONG INDUSTRIES, INC., US"}                               | 2      | 1     | 1.0                  |
+| Node[3253]{ASN:"11135",name:"CROSS-DEVELOPMENT-MONTGOMERY - Cross Development/Montgomery LP, US"} | 2      | 1     | 1.0                  |
+| Node[6763]{ASN:"18602",name:"PWRWG - Paul, Weiss, Rifkind, Wharton & Garrison, US"}               | 2      | 1     | 1.0                  |
+| Node[3760]{ASN:"12064",name:"ASN-CXA-HR-12064-CBS - Cox Communications Inc., US"}                 | 4      | 2     | 0.3333333333333333   |
+| Node[2444]{ASN:"9316",name:"DACOM-PUBNETPLUS-AS-KR DACOM-PUBNETPLUS, KR"}                         | 12     | 4     | 0.06060606060606061  |
+| Node[9851]{ASN:"5689"}                                                                            | 2      | 1     | 1.0                  |
+| Node[1449]{ASN:"6761",name:"INGATE , RU"}                                                         | 6      | 2     | 0.13333333333333333  |
+| Node[8943]{ASN:"7731"}                                                                            | 2      | 1     | 1.0                  |
+| Node[3575]{ASN:"11746",name:"WAGGENER-EDSTROM - Waggener Edstrom, US"}                            | 2      | 1     | 1.0                  |
+| Node[3440]{ASN:"11492",name:"CABLEONE - CABLE ONE, INC., US"}                                     | 7      | 5     | 0.23809523809523808  |
+| Node[4062]{ASN:"12632",name:"DIGINETMOBIL RCS & RDS Mobile, RO"}                                  | 6      | 1     | 0.06666666666666667  |
+| Node[61]{ASN:"101",name:"WASH-NSF-AS - University of Washington, US"}                             | 18     | 9     | 0.058823529411764705 |
+| Node[152]{ASN:"683",name:"ARGONNE-AS - Argonne National Lab, US"}                                 | 8      | 8     | 0.2857142857142857   |
+| Node[869]{ASN:"4546",name:"MCGRAW-AS - McGraw-Hill, US"}                                          | 3      | 2     | 0.6666666666666666   |
+| Node[11730]{ASN:"8227"}                                                                           | 3      | 1     | 0.3333333333333333   |
+| Node[4855]{ASN:"14155",name:"RURAL-TELEPHONE-SVCCO - Rural Telephone Service Co, Inc., US"}       | 2      | 1     | 1.0                  |
+| Node[8599]{ASN:"6756"}                                                                            | 2      | 1     | 1.0                  |
+| Node[10937]{ASN:"12170"}                                                                          | 2      | 1     | 1.0                  |
+| Node[7644]{ASN:"20433",name:"CENGAGE-MABOS - Cengage Learning Inc, US"}                           | 2      | 1     | 1.0                  |
+| Node[9286]{ASN:"16666"}                                                                           | 2      | 1     | 1.0                  |
+| Node[4216]{ASN:"12915",name:"EPAG-AS , DE"}                                                       | 2      | 1     | 1.0                  |
+| Node[6802]{ASN:"18678",name:"INTERNEXA S.A. E.S.P, CO"}                                           | 4      | 1     | 0.16666666666666666  |
+| Node[5249]{ASN:"14937",name:"DOCUMENT-SYSTEMS - Document Systems, Inc., US"}                      | 2      | 1     | 1.0                  |
+| Node[5389]{ASN:"15229",name:"EDFTNA - EDF Trading North America, LLC, US"}                        | 2      | 1     | 1.0                  |
+| Node[3988]{ASN:"12491",name:"IPPLANET-AS , IL"}                                                   | 14     | 2     | 0.02197802197802198  |
+| Node[627]{ASN:"3320",name:"DTAG Internet service provider operations, DE"}                        | 73     | 78    | 0.02968036529680365  |
+| Node[2706]{ASN:"9824",name:"JTCL-JP-AS Jupiter Telecommunication Co. Ltd, JP"}                    | 5      | 2     | 0.2                  |
+| Node[7455]{ASN:"20018",name:"MVT-AS - Moapa Valley Telephone Company, US"}                        | 2      | 1     | 1.0                  |
+| Node[5]{ASN:"1",name:"LVLT-1 - Level 3 Communications, Inc., US"}                                 | 497    | 973   | 0.007894139027714676 |
+| Node[7797]{ASN:"20751",name:"ASN-AZISTA , AT"}                                                    | 2      | 1     | 1.0                  |
+| Node[3873]{ASN:"12271",name:"SCRR-12271 - Time Warner Cable Internet LLC, US"}                    | 2      | 1     | 1.0                  |
+| Node[7019]{ASN:"19087",name:"THE-UPS-STORE-INC - The UPS Store, Inc., US"}                        | 3      | 3     | 1.0                  |
+| Node[6655]{ASN:"17810",name:"CELLNEXT-SOLUTIONS-AP Cellnext Solutions Limited -, IN"}             | 2      | 1     | 1.0                  |
+| Node[4751]{ASN:"13951",name:"CENTER-SEVEN - C7 Data Centers, Inc., US"}                           | 2      | 1     | 1.0                  |
+| Node[7390]{ASN:"19891",name:"F-SECURE-AS-US - F-Secure Corporation, US"}                          | 2      | 1     | 1.0                  |
+| Node[9292]{ASN:"14647"}                                                                           | 2      | 1     | 1.0                  |
+| Node[10604]{ASN:"20589"}                                                                          | 5      | 1     | 0.1                  |
+| Node[10238]{ASN:"11578"}                                                                          | 2      | 1     | 1.0                  |
+| Node[8508]{ASN:"13983"}                                                                           | 2      | 1     | 1.0                  |
+| Node[4047]{ASN:"12605",name:"LIWEST-AT Linz, Austria, AT"}                                        | 4      | 2     | 0.3333333333333333   |
+| Node[1590]{ASN:"7194",name:"BWP - City of Burbank, US"}                                           | 5      | 10    | 1.0                  |
+| Node[6796]{ASN:"18665",name:"-Reserved AS-, ZZ"}                                                  | 2      | 1     | 1.0                  |
+| Node[4151]{ASN:"12793",name:"A1-TELEKOM-AT , AT"}                                                 | 4      | 1     | 0.16666666666666666  |
+| Node[964]{ASN:"4788",name:"TMNET-AS-AP TM Net, Internet Service Provider, MY"}                    | 13     | 2     | 0.02564102564102564  |
+| Node[3480]{ASN:"11575",name:"JMC-ASN1 - Jupiter Medical Center, US"}                              | 2      | 1     | 1.0                  |
+| Node[1795]{ASN:"7770",name:"TRITON - Triton Technologies, Inc., US"}                              | 2      | 1     | 1.0                  |
+| Node[11580]{ASN:"14963"}                                                                          | 3      | 3     | 1.0                  |
+| Node[6778]{ASN:"18629",name:"LTF-001 - LIFE TIME FITNESS, Inc., US"}                              | 3      | 1     | 0.3333333333333333   |
+| Node[2943]{ASN:"10292",name:"CWJ-1 - Cable & Wireless Jamaica, JM"}                               | 2      | 1     | 1.0                  |
+| Node[5338]{ASN:"15129",name:"TRICOM-IL - Geneseo Telephone Company, US"}                          | 2      | 1     | 1.0                  |
+| Node[240]{ASN:"1341",name:"AB-AS - Allen-Bradley Company, Inc., US"}                              | 3      | 1     | 0.3333333333333333   |
+| Node[10292]{ASN:"7444"}                                                                           | 2      | 1     | 1.0                  |
+| Node[3504]{ASN:"11608",name:"ACTTG - Accretive Networks, US"}                                     | 5      | 2     | 0.2                  |
+| Node[8032]{ASN:"21722",name:"QSS-NOTL-AS - Quick Service Software Inc., CA"}                      | 2      | 1     | 1.0                  |
+| Node[1910]{ASN:"8158",name:"LUCENT-WHATS - LGS Innovations, LLC, US"}                             | 2      | 1     | 1.0                  |
+| Node[3202]{ASN:"11022",name:"ALABANZA-BALT - Alabanza, Inc., US"}                                 | 3      | 3     | 1.0                  |
+| Node[8190]{ASN:"22079",name:"APTNET-AS-01 - Alaska Power & Telephone Company, US"}                | 2      | 1     | 1.0                  |
+| Node[5251]{ASN:"14945",name:"FMC-401NEWING-LOH - FAIRFIELD MEDICAL CENTER, US"}                   | 2      | 1     | 1.0                  |
+| Node[9711]{ASN:"4278"}                                                                            | 7      | 7     | 0.3333333333333333   |
+| Node[3660]{ASN:"11892",name:"PEARSON-NA - NCS Pearson Inc., US"}                                  | 2      | 1     | 1.0                  |
+| Node[10198]{ASN:"10383"}                                                                          | 5      | 4     | 0.4                  |
+| Node[8560]{ASN:"816"}                                                                             | 15     | 1     | 0.009523809523809525 |
+| Node[2176]{ASN:"8752",name:"ASVT-NETWORK Russia, RU"}                                             | 2      | 1     | 1.0                  |
+| Node[3359]{ASN:"11329",name:"ASN-USI - AT&T Corp. - ITS, US"}                                     | 3      | 3     | 1.0                  |
+| Node[4335]{ASN:"13135",name:"CREW-AS Hamburg, Germany, DE"}                                       | 2      | 1     | 1.0                  |
+| Node[6207]{ASN:"16818",name:"CORESYS - Core Services, US"}                                        | 3      | 2     | 0.6666666666666666   |
+| Node[6713]{ASN:"18504",name:"FLASHSEATS-APOD-ASN1001 - Veritix, US"}                              | 2      | 1     | 1.0                  |
+| Node[1596]{ASN:"7224",name:"AMAZON-AS - Amazon.com, Inc., US"}                                    | 4      | 5     | 0.8333333333333334   |
+| Node[3759]{ASN:"12062",name:"DECISIONONE - Decision One, US"}                                     | 2      | 1     | 1.0                  |
+| Node[11539]{ASN:"11311"}                                                                          | 2      | 1     | 1.0                  |
+| Node[3713]{ASN:"11984",name:"NETWALK - NetWalk, US"}                                              | 2      | 1     | 1.0                  |
+| Node[3671]{ASN:"11911",name:"BANKOFNEWYORK-AS - The Bank of New York Mellon Corporation, US"}     | 2      | 1     | 1.0                  |
+| Node[4533]{ASN:"13525",name:"TCSN-NET - The Computer Shop Netlink, US"}                           | 4      | 2     | 0.3333333333333333   |
+| Node[5543]{ASN:"15517",name:"NETSTREAM-CH , CH"}                                                  | 3      | 1     | 0.3333333333333333   |
+| Node[8704]{ASN:"6800"}                                                                            | 6      | 1     | 0.06666666666666667  |
++-------------------------------------------------------------------------------------------------------------------------------------------+
+100 rows
+38484 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ // Page rank using APOC
+neo4j-sh (?)$ MATCH (node:AS)
+> WITH collect(node) AS nodes
+> CALL apoc.algo.pageRank(nodes) YIELD node, score
+> RETURN node, score
+> ORDER BY score DESC
+> limit 100;
++----------------------------------------------------------------------------------------------------------------------------+
+| node                                                                                                             | score   |
++----------------------------------------------------------------------------------------------------------------------------+
+| Node[879]{ASN:"4589",name:"EASYNET Easynet Global Services, GB"}                                                 | 0.43416 |
+| Node[11721]{ASN:"1784"}                                                                                          | 0.40668 |
+| Node[8528]{ASN:"19583"}                                                                                          | 0.39024 |
+| Node[84]{ASN:"174",name:"COGENT-174 - Cogent Communications, US"}                                                | 0.33697 |
+| Node[11607]{ASN:"8428"}                                                                                          | 0.33523 |
+| Node[8954]{ASN:"8355"}                                                                                           | 0.33423 |
+| Node[9122]{ASN:"8969"}                                                                                           | 0.32081 |
+| Node[2342]{ASN:"9103",name:"ZIELMAN-EDU-AS Metropolitan Network ZielMAN, PL"}                                    | 0.31788 |
+| Node[2686]{ASN:"9790",name:"CALLPLUS-NZ-AP CallPlus Services Limited, NZ"}                                       | 0.31604 |
+| Node[1819]{ASN:"7847",name:"NASA-HPCC-ESS - NASA Goddard Space Flight Center, US"}                               | 0.30419 |
+| Node[4268]{ASN:"13012",name:"GENIAS-AS , DE"}                                                                    | 0.30096 |
+| Node[6389]{ASN:"17210",name:"EVERYWHERE-WIRELESS-LLC - Everywhere Wireless, LLC, US"}                            | 0.30041 |
+| Node[10163]{ASN:"7462"}                                                                                          | 0.29926 |
+| Node[2735]{ASN:"9872",name:"ITNET-NZ-AS-AP Actrix Networks Ltd, NZ"}                                             | 0.29846 |
+| Node[5715]{ASN:"15835",name:"MAP Moscow Network Access Point, RU"}                                               | 0.29681 |
+| Node[497]{ASN:"2686",name:"ATGS-MMD-AS - AT&T Global Network Services, LLC, US"}                                 | 0.29575 |
+| Node[8517]{ASN:"16002"}                                                                                          | 0.29298 |
+| Node[351]{ASN:"1880",name:"STUPI , SE"}                                                                          | 0.28918 |
+| Node[6268]{ASN:"16935",name:"KSC-NETWORKS - Kingland Systems Corp., US"}                                         | 0.28821 |
+| Node[208]{ASN:"1221",name:"ASN-TELSTRA Telstra Pty Ltd, AU"}                                                     | 0.28817 |
+| Node[4295]{ASN:"13065",name:"ZIELMAN-COM-AS , PL"}                                                               | 0.28763 |
+| Node[9422]{ASN:"15021"}                                                                                          | 0.28761 |
+| Node[10821]{ASN:"4200"}                                                                                          | 0.28723 |
+| Node[2039]{ASN:"8426",name:"CLARANET-AS ClaraNET LTD, GB"}                                                       | 0.28678 |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                                             | 0.28477 |
+| Node[1948]{ASN:"8244",name:"SPARKLENET Multi-National-Customers AS, IT"}                                         | 0.28456 |
+| Node[11472]{ASN:"19836"}                                                                                         | 0.28415 |
+| Node[933]{ASN:"4729",name:"JAEA Japan Atomic Energy Agency, JP"}                                                 | 0.2841  |
+| Node[8078]{ASN:"21828",name:"TCOE - Tulare County Office of Education, US"}                                      | 0.28224 |
+| Node[7902]{ASN:"21032",name:"TELTA-AS , DE"}                                                                     | 0.2822  |
+| Node[1878]{ASN:"8057",name:"VISIONNET - Vision Net, Inc., US"}                                                   | 0.28143 |
+| Node[1014]{ASN:"5058",name:"NRL-EXP - Navy Network Information Center (NNIC), US"}                               | 0.28048 |
+| Node[670]{ASN:"3462",name:"HINET Data Communication Business Group, TW"}                                         | 0.28045 |
+| Node[11391]{ASN:"12300"}                                                                                         | 0.27967 |
+| Node[654]{ASN:"3389",name:"FORDSRL-AS - Ford Motor Company, US"}                                                 | 0.27945 |
+| Node[1601]{ASN:"7238",name:"MACROVISION-CORPORATION - Rovi Corporation, US"}                                     | 0.27941 |
+| Node[5506]{ASN:"15456",name:"INTERNETX-AS , DE"}                                                                 | 0.2794  |
+| Node[911]{ASN:"4670",name:"HYUNDAI-KR Shinbiro, KR"}                                                             | 0.27926 |
+| Node[652]{ASN:"3385",name:"BROADVIEWNET-AS-3385 - Broadview Networks, Inc., US"}                                 | 0.2791  |
+| Node[6256]{ASN:"16913",name:"LOYNO-EDU - Loyola University New Orleans, US"}                                     | 0.27847 |
+| Node[10385]{ASN:"6767"}                                                                                          | 0.27828 |
+| Node[8844]{ASN:"21838"}                                                                                          | 0.27805 |
+| Node[8635]{ASN:"7498"}                                                                                           | 0.27802 |
+| Node[8292]{ASN:"65499",name:"-Private Use AS-, ZZ"}                                                              | 0.27786 |
+| Node[9035]{ASN:"65427"}                                                                                          | 0.27786 |
+| Node[2953]{ASN:"10322",name:"ERCOT-ISO - Ercot Independent System Operations, US"}                               | 0.2778  |
+| Node[9790]{ASN:"{6423}"}                                                                                         | 0.27764 |
+| Node[9113]{ASN:"6311"}                                                                                           | 0.2776  |
+| Node[10298]{ASN:"22021"}                                                                                         | 0.27759 |
+| Node[9802]{ASN:"16329"}                                                                                          | 0.27506 |
+| Node[493]{ASN:"2648",name:"NIST-BOULDER - NIST/U.S. Dept. of Commerce, US"}                                      | 0.27301 |
+| Node[8349]{ASN:"12838"}                                                                                          | 0.26825 |
+| Node[2308]{ASN:"9031",name:"EDPNET , BE"}                                                                        | 0.26411 |
+| Node[5698]{ASN:"15798",name:"OLMAN-EDU-AS OLMAN, Metropolitan Area Network (educational AS), TR"}                | 0.26173 |
+| Node[1031]{ASN:"5378",name:", GB"}                                                                               | 0.26089 |
+| Node[10072]{ASN:"20767"}                                                                                         | 0.25895 |
+| Node[2320]{ASN:"9056",name:"PSN-AS , RU"}                                                                        | 0.25738 |
+| Node[5756]{ASN:"15919",name:"INTERHOST , ES"}                                                                    | 0.25657 |
+| Node[30]{ASN:"38",name:"UIUC - University of Illinois, US"}                                                      | 0.25381 |
+| Node[9289]{ASN:"12718"}                                                                                          | 0.25284 |
+| Node[2284]{ASN:"8973",name:"SSVL , SE"}                                                                          | 0.24961 |
+| Node[11476]{ASN:"8406"}                                                                                          | 0.2495  |
+| Node[10644]{ASN:"6728"}                                                                                          | 0.24825 |
+| Node[2049]{ASN:"8449",name:"AS8449-ELCAT , KG"}                                                                  | 0.24602 |
+| Node[7736]{ASN:"20621",name:"OPENIT , DE"}                                                                       | 0.24525 |
+| Node[3880]{ASN:"12286",name:"PRINCETON-HEALTHCARE-SYSTEM - Princeton Healthcare System, US"}                     | 0.24443 |
+| Node[940]{ASN:"4755",name:"TATACOMM-AS TATA Communications formerly VSNL is Leading ISP, IN"}                    | 0.24389 |
+| Node[11631]{ASN:"20639"}                                                                                         | 0.24272 |
+| Node[10799]{ASN:"8910"}                                                                                          | 0.24271 |
+| Node[219]{ASN:"1257",name:"TELE2, SE"}                                                                           | 0.24242 |
+| Node[1297]{ASN:"6316",name:"AS-PAETEC-NET - PaeTec Communications, Inc., US"}                                    | 0.24216 |
+| Node[7197]{ASN:"19479",name:"CERVALIS - CyrusOne LLC, US"}                                                       | 0.24119 |
+| Node[600]{ASN:"3261",name:"DIPT-AS , UA"}                                                                        | 0.24088 |
+| Node[1414]{ASN:"6667",name:"EUNET-FINLAND , FI"}                                                                 | 0.23996 |
+| Node[8768]{ASN:"17627"}                                                                                          | 0.23991 |
+| Node[1285]{ASN:"6263",name:"NDIN - State of North Dakota, US"}                                                   | 0.23968 |
+| Node[1682]{ASN:"7502",name:"IP-KYOTO Advanced Software Technology & Management Research Institute of KYOTO, JP"} | 0.23944 |
+| Node[5896]{ASN:"16181",name:"MEREZHA Merezha autonomous system, UA"}                                             | 0.23919 |
+| Node[5619]{ASN:"15665",name:"WOLA-AS Campus Wola autonomous system, PL"}                                         | 0.23846 |
+| Node[4202]{ASN:"12883",name:"UCOMLINE PRIVATE JOINT-STOCK COMPANY "FARLEP-INVEST", UA"}                          | 0.23761 |
+| Node[11647]{ASN:"9057"}                                                                                          | 0.2364  |
+| Node[1998]{ASN:"8343",name:"DORIS-AS , UA"}                                                                      | 0.23448 |
+| Node[19]{ASN:"22",name:"DNIC-AS-00022 - Navy Network Information Center (NNIC), US"}                             | 0.23421 |
+| Node[49]{ASN:"74",name:"XDRENET-AS - Defence Research Establishment, CA"}                                        | 0.23348 |
+| Node[10495]{ASN:"12473"}                                                                                         | 0.23304 |
+| Node[300]{ASN:"1653",name:"SUNET SUNET Swedish University Network, SE"}                                          | 0.23286 |
+| Node[11389]{ASN:"12304"}                                                                                         | 0.2322  |
+| Node[638]{ASN:"3344",name:"BURSTFIRE Internet Solutions Provider, GB"}                                           | 0.23199 |
+| Node[7798]{ASN:"20755",name:"NET-LAB Frankfurter Str. 99, DE"}                                                   | 0.23028 |
+| Node[4365]{ASN:"13200",name:"BANCOBPI Portugal, PT"}                                                             | 0.23    |
+| Node[8696]{ASN:"7283"}                                                                                           | 0.22983 |
+| Node[5527]{ASN:"15492",name:"PFALZWERKE-AS Kurfuerstenstrasse 29, DE"}                                           | 0.2294  |
+| Node[2382]{ASN:"9179",name:"FIDO-ANYCAST , GB"}                                                                  | 0.22883 |
+| Node[8518]{ASN:"16000"}                                                                                          | 0.22854 |
+| Node[5952]{ASN:"16300",name:"INTERTAX-AREA , RU"}                                                                | 0.22849 |
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}                 | 0.22823 |
+| Node[9748]{ASN:"8863"}                                                                                           | 0.22744 |
+| Node[1420]{ASN:"6694",name:"RTSNET-AS , RU"}                                                                     | 0.22675 |
+| Node[3156]{ASN:"10935",name:"RLC-INTERNET - RLC INTERNET, US"}                                                   | 0.22674 |
+| Node[2695]{ASN:"9805",name:"--No Registry Entry--"}                                                              | 0.22672 |
++----------------------------------------------------------------------------------------------------------------------------+
+100 rows
+456 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ // Incoming Closeness using APOC - measure distance from other nodes
+neo4j-sh (?)$ match (node:AS)
+> WITH collect(node) AS nodes
+> CALL apoc.algo.closeness(['TO'],nodes,'INCOMING') YIELD node, score
+> RETURN node, score
+> ORDER BY score DESC
+> limit 100;
++--------------------------------------------------------------------------------------------------------------------------+
+| node                                                                                             | score                 |
++--------------------------------------------------------------------------------------------------------------------------+
+| Node[84]{ASN:"174",name:"COGENT-174 - Cogent Communications, US"}                                | 0.0018181818181818182 |
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"} | 0.001639344262295082  |
+| Node[1884]{ASN:"8070",name:"MICROSOFT-CORP-MSN-AS-BLOCK - Microsoft Corporation, US"}            | 0.0016051364365971107 |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                              | 0.0016025641025641025 |
+| Node[10435]{ASN:"13646"}                                                                         | 0.0015748031496062992 |
+| Node[11489]{ASN:"6347"}                                                                          | 0.001567398119122257  |
+| Node[4566]{ASN:"13591",name:"Brasil Telecom Comunica��o Multimidia, BR"}                         | 0.0015408320493066256 |
+| Node[4828]{ASN:"14103",name:"ACDNET-ASN1 - ACD.net, US"}                                         | 0.0015313935681470138 |
+| Node[213]{ASN:"1239",name:"SPRINTLINK - Sprint, US"}                                             | 0.001524390243902439  |
+| Node[618]{ASN:"3303",name:"SWISSCOM Swisscom (Switzerland) Ltd, CH"}                             | 0.0015128593040847202 |
+| Node[3850]{ASN:"12222",name:"AKAMAI - Akamai Technologies, Inc., US"}                            | 0.0015128593040847202 |
+| Node[954]{ASN:"4775",name:"GLOBE-TELECOM-AS Globe Telecoms, PH"}                                 | 0.0015105740181268882 |
+| Node[1544]{ASN:"7018",name:"ATT-INTERNET4 - AT&T Services, Inc., US"}                            | 0.0015105740181268882 |
+| Node[4233]{ASN:"12956",name:"TELEFONICA Telefonica Wholesale Network, ES"}                       | 0.0015060240963855422 |
+| Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}      | 0.0014992503748125937 |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}   | 0.0014925373134328358 |
+| Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"} | 0.0014903129657228018 |
+| Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                           | 0.0014903129657228018 |
+| Node[1094]{ASN:"5511",name:"OPENTRANSIT , FR"}                                                   | 0.001488095238095238  |
+| Node[10821]{ASN:"4200"}                                                                          | 0.001488095238095238  |
+| Node[11834]{ASN:"3703"}                                                                          | 0.0014858841010401188 |
+| Node[531]{ASN:"2856",name:"BT-UK-AS BTnet UK Regional network, GB"}                              | 0.001483679525222552  |
+| Node[1344]{ASN:"6453",name:"AS6453 - TATA COMMUNICATIONS (AMERICA) INC, US"}                     | 0.0014814814814814814 |
+| Node[5]{ASN:"1",name:"LVLT-1 - Level 3 Communications, Inc., US"}                                | 0.0014792899408284023 |
+| Node[894]{ASN:"4637",name:"ASN-TELSTRA-GLOBAL Telstra Global, HK"}                               | 0.0014792899408284023 |
+| Node[549]{ASN:"2914",name:"NTT-COMMUNICATIONS-2914 - NTT America, Inc., US"}                     | 0.0014749262536873156 |
+| Node[803]{ASN:"4134",name:"CHINANET-BACKBONE No.31,Jin-rong Street, CN"}                         | 0.0014749262536873156 |
+| Node[6875]{ASN:"18816",name:"ANDREWCORP-AOP - Andrew Corp., US"}                                 | 0.0014727540500736377 |
+| Node[11495]{ASN:"8210"}                                                                          | 0.0014727540500736377 |
+| Node[11474]{ASN:"8408"}                                                                          | 0.0014705882352941176 |
+| Node[2257]{ASN:"8918",name:"CARRIER1-AS , NL"}                                                   | 0.0014684287812041115 |
+| Node[692]{ASN:"3573",name:"ACCENTURE - Accenture LLP, US"}                                       | 0.001466275659824047  |
+| Node[1664]{ASN:"7473",name:"SINGTEL-AS-AP Singapore Telecommunications Ltd, SG"}                 | 0.0014619883040935672 |
+| Node[10878]{ASN:"17097"}                                                                         | 0.0014619883040935672 |
+| Node[1437]{ASN:"6730",name:"SUNRISE , CH"}                                                       | 0.00145985401459854   |
+| Node[873]{ASN:"4565",name:"MEGAPATH2-US - MegaPath Networks Inc., US"}                           | 0.0014577259475218659 |
+| Node[615]{ASN:"3300",name:"BT , NL"}                                                             | 0.0014534883720930232 |
+| Node[10660]{ASN:"2548"}                                                                          | 0.001451378809869376  |
+| Node[8728]{ASN:"12076"}                                                                          | 0.0014492753623188406 |
+| Node[223]{ASN:"1290",name:"TELSTRAEUROPELTD-BACKBONE Telstra Europe Ltd, GB"}                    | 0.001447178002894356  |
+| Node[6247]{ASN:"16898",name:"LOG-NET - LOG-NET, INC., US"}                                       | 0.001447178002894356  |
+| Node[492]{ASN:"2647",name:"SITA , FR"}                                                           | 0.001443001443001443  |
+| Node[9542]{ASN:"1833"}                                                                           | 0.001443001443001443  |
+| Node[517]{ASN:"2828",name:"XO-AS15 - XO Communications, US"}                                     | 0.001443001443001443  |
+| Node[514]{ASN:"2818",name:"BBC BBC Internet Services, UK, GB"}                                   | 0.001443001443001443  |
+| Node[4754]{ASN:"13955",name:"ECHO-UPLINKDATA-COM - Echostar Broadcasting Corporation, US"}       | 0.001440922190201729  |
+| Node[9462]{ASN:"4513"}                                                                           | 0.001440922190201729  |
+| Node[447]{ASN:"2514",name:"INFOSPHERE NTT PC Communications, Inc., JP"}                          | 0.0014388489208633094 |
+| Node[3877]{ASN:"12281",name:"APAC-AS - APAC Customer Services, US"}                              | 0.0014388489208633094 |
+| Node[3727]{ASN:"12006",name:"BROADVIEWNET-AS-12006 - Broadview Networks, Inc., US"}              | 0.0014388489208633094 |
+| Node[65]{ASN:"109",name:"CISCOSYSTEMS - Cisco Systems, Inc., US"}                                | 0.0014367816091954023 |
+| Node[1348]{ASN:"6461",name:"ZAYO-6461 - Zayo Bandwidth Inc, US"}                                 | 0.0014367816091954023 |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                | 0.0014347202295552368 |
+| Node[6021]{ASN:"16463",name:"DPSINET - Data Processing Solutions, Inc., US"}                     | 0.0014347202295552368 |
+| Node[1450]{ASN:"6762",name:"SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"}                      | 0.0014347202295552368 |
+| Node[9469]{ASN:"9425"}                                                                           | 0.0014347202295552368 |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                        | 0.0014326647564469914 |
+| Node[3798]{ASN:"12128",name:"ITS-HYDERABAD - Thomson Reuters U.S. LLC, US"}                      | 0.0014326647564469914 |
+| Node[10353]{ASN:"18942"}                                                                         | 0.0014326647564469914 |
+| Node[11465]{ASN:"18832"}                                                                         | 0.001430615164520744  |
+| Node[948]{ASN:"4766",name:"KIXS-AS-KR Korea Telecom, KR"}                                        | 0.0014285714285714286 |
+| Node[1735]{ASN:"7633",name:"SOFTNET-AS-AP Software Technology Parks of India - Bangalore, IN"}   | 0.0014245014245014246 |
+| Node[4662]{ASN:"13778",name:"JOHNSON-AND-JOHNSON - Johnson & Johnson, US"}                       | 0.0014245014245014246 |
+| Node[9904]{ASN:"6432"}                                                                           | 0.0014245014245014246 |
+| Node[10644]{ASN:"6728"}                                                                          | 0.0014245014245014246 |
+| Node[6346]{ASN:"17112",name:"BBDO-NY - BBDO New York, US"}                                       | 0.0014245014245014246 |
+| Node[1838]{ASN:"7911",name:"LVLT-7911 - Level 3 Communications, Inc., US"}                       | 0.0014245014245014246 |
+| Node[1627]{ASN:"7324",name:"IFAX-ASN-1 - iFAX Solutions, Inc., US"}                              | 0.001422475106685633  |
+| Node[9185]{ASN:"11953"}                                                                          | 0.001422475106685633  |
+| Node[1861]{ASN:"8001",name:"NET-ACCESS-CORP - Net Access Corporation, US"}                       | 0.001422475106685633  |
+| Node[11219]{ASN:"10989"}                                                                         | 0.001422475106685633  |
+| Node[10081]{ASN:"10344"}                                                                         | 0.001422475106685633  |
+| Node[226]{ASN:"1299",name:"TELIANET , SE"}                                                       | 0.0014204545454545455 |
+| Node[5328]{ASN:"15112",name:"GATX-CORP - GATX Corporation, US"}                                  | 0.0014204545454545455 |
+| Node[496]{ASN:"2685",name:"ATGS-MMD-AS - AT&T Global Network Services, LLC, US"}                 | 0.0014204545454545455 |
+| Node[871]{ASN:"4549",name:"ESPN-AS - ESPN, US"}                                                  | 0.0014204545454545455 |
+| Node[3712]{ASN:"11981",name:"SPECIALSYSTEMS - Special Systems Inc., US"}                         | 0.0014204545454545455 |
+| Node[4589]{ASN:"13633",name:"OOCL-CHS - OOCL (USA), Inc., US"}                                   | 0.0014204545454545455 |
+| Node[3689]{ASN:"11944",name:"WEBTRENDS-CORP - Webtrends Corporation, US"}                        | 0.0014204545454545455 |
+| Node[3449]{ASN:"11511",name:"CRETE-INTERNET - Crete Carrier Corporation, US"}                    | 0.0014204545454545455 |
+| Node[11392]{ASN:"11908"}                                                                         | 0.0014204545454545455 |
+| Node[3441]{ASN:"11494",name:"KELLOGGCC - Kellogg Community College, US"}                         | 0.0014204545454545455 |
+| Node[11003]{ASN:"18475"}                                                                         | 0.0014204545454545455 |
+| Node[8150]{ASN:"21991",name:"ARTSTOR - ARTStor, Inc., US"}                                       | 0.0014204545454545455 |
+| Node[7986]{ASN:"21606",name:"SUMMER-ROAD - Summer Road, LLC, US"}                                | 0.0014204545454545455 |
+| Node[10775]{ASN:"13741"}                                                                         | 0.0014204545454545455 |
+| Node[7979]{ASN:"21592",name:"MULTIVIEW - Multi-View Inc., US"}                                   | 0.0014204545454545455 |
+| Node[7548]{ASN:"20221",name:"IATA - International Air Transport Association, CA"}                | 0.0014204545454545455 |
+| Node[7196]{ASN:"19478",name:"ICMARC - ICMA RETIREMENT CORP, US"}                                 | 0.0014204545454545455 |
+| Node[7038]{ASN:"19117",name:"HEAVYCOMPUTING - Heavy Computing, CA"}                              | 0.0014204545454545455 |
+| Node[10334]{ASN:"20094"}                                                                         | 0.0014204545454545455 |
+| Node[3146]{ASN:"10915",name:"CQL-AS - CQL Incorporated, US"}                                     | 0.0014204545454545455 |
+| Node[2980]{ASN:"10400",name:"THETORONTOSTAR - Toronto Star, CA"}                                 | 0.0014204545454545455 |
+| Node[9556]{ASN:"18983"}                                                                          | 0.0014204545454545455 |
+| Node[6273]{ASN:"16946",name:"OBLONG - OBLONG INDUSTRIES, INC., US"}                              | 0.0014204545454545455 |
+| Node[9508]{ASN:"11346"}                                                                          | 0.0014204545454545455 |
+| Node[3734]{ASN:"12018",name:"OOCL-SJC - OOCL (USA), Inc., US"}                                   | 0.0014204545454545455 |
+| Node[6239]{ASN:"16880",name:"AS2-TRENDMICRO-COM - TREND MICRO INCORPORATED, US"}                 | 0.0014204545454545455 |
+| Node[3617]{ASN:"11823",name:"LORDABBETTCO - Lord, Abbett & Co., US"}                             | 0.0014184397163120568 |
+| Node[747]{ASN:"3786",name:"LGDACOM LG DACOM Corporation, KR"}                                    | 0.00141643059490085   |
++--------------------------------------------------------------------------------------------------------------------------+
+100 rows
+12481 ms
+neo4j-sh (?)$ 
+neo4j-sh (?)$ // Incoming Betweenness using APOC
+neo4j-sh (?)$ match (node:AS)
+> WITH collect(node) AS nodes
+> CALL apoc.algo.betweenness(['TO'],nodes,'INCOMING') YIELD node, score
+> RETURN node, score
+> ORDER BY score DESC
+> limit 100;
++------------------------------------------------------------------------------------------------------------------------------+
+| node                                                                                                    | score              |
++------------------------------------------------------------------------------------------------------------------------------+
+| Node[155]{ASN:"701",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}        | 765141.9849431927  |
+| Node[689]{ASN:"3561",name:"CENTURYLINK-LEGACY-SAVVIS - Savvis, US"}                                     | 404785.8614878473  |
+| Node[213]{ASN:"1239",name:"SPRINTLINK - Sprint, US"}                                                    | 289206.23092132324 |
+| Node[156]{ASN:"702",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}        | 270893.8577499191  |
+| Node[1344]{ASN:"6453",name:"AS6453 - TATA COMMUNICATIONS (AMERICA) INC, US"}                            | 221972.59112166462 |
+| Node[1544]{ASN:"7018",name:"ATT-INTERNET4 - AT&T Services, Inc., US"}                                   | 162955.5467148859  |
+| Node[84]{ASN:"174",name:"COGENT-174 - Cogent Communications, US"}                                       | 153623.42730845461 |
+| Node[618]{ASN:"3303",name:"SWISSCOM Swisscom (Switzerland) Ltd, CH"}                                    | 147093.75402359606 |
+| Node[4717]{ASN:"13878",name:"UOL DIVEO S.A., BR"}                                                       | 146900.87778641804 |
+| Node[1437]{ASN:"6730",name:"SUNRISE , CH"}                                                              | 146650.14997931753 |
+| Node[92]{ASN:"209",name:"CENTURYLINK-US-LEGACY-QWEST - Qwest Communications Company, LLC, US"}          | 146492.82373057376 |
+| Node[643]{ASN:"3356",name:"LEVEL3 - Level 3 Communications, Inc., US"}                                  | 145357.05579876597 |
+| Node[10821]{ASN:"4200"}                                                                                 | 138392.83062277993 |
+| Node[11489]{ASN:"6347"}                                                                                 | 138162.529143026   |
+| Node[5]{ASN:"1",name:"LVLT-1 - Level 3 Communications, Inc., US"}                                       | 136601.58689910432 |
+| Node[893]{ASN:"4635",name:"HKIX-RS1 Hong Kong Internet Exchange--Route Server 1, HK"}                   | 133551.1345747523  |
+| Node[11672]{ASN:"7439"}                                                                                 | 124373.0014828767  |
+| Node[597]{ASN:"3257",name:"GTT-BACKBONE GTT, DE"}                                                       | 119252.60783187216 |
+| Node[11647]{ASN:"9057"}                                                                                 | 107207.03519734954 |
+| Node[496]{ASN:"2685",name:"ATGS-MMD-AS - AT&T Global Network Services, LLC, US"}                        | 106990.43747216703 |
+| Node[1047]{ASN:"5400",name:"BT , GB"}                                                                   | 103545.78537822637 |
+| Node[2812]{ASN:"10026",name:"PACNET Pacnet Global Ltd, HK"}                                             | 102494.010513322   |
+| Node[10108]{ASN:"10588"}                                                                                | 100378.66897645152 |
+| Node[684]{ASN:"3549",name:"LVLT-3549 - Level 3 Communications, Inc., US"}                               | 93920.7419713284   |
+| Node[221]{ASN:"1273",name:"CW Vodafone Group PLC, GB"}                                                  | 93290.81256041962  |
+| Node[820]{ASN:"4230",name:"CLARO S.A., BR"}                                                             | 92633.63741365733  |
+| Node[9660]{ASN:"5727"}                                                                                  | 92424.89689048089  |
+| Node[2257]{ASN:"8918",name:"CARRIER1-AS , NL"}                                                          | 87702.30142828113  |
+| Node[8774]{ASN:"9156"}                                                                                  | 86548.90567809083  |
+| Node[4233]{ASN:"12956",name:"TELEFONICA Telefonica Wholesale Network, ES"}                              | 85076.20524482867  |
+| Node[109]{ASN:"286",name:"KPN , NL"}                                                                    | 82259.59127140332  |
+| Node[514]{ASN:"2818",name:"BBC BBC Internet Services, UK, GB"}                                          | 81907.15828464914  |
+| Node[11175]{ASN:"9335"}                                                                                 | 76834.14420756738  |
+| Node[363]{ASN:"1916",name:"Associa��o Rede Nacional de Ensino e Pesquisa, BR"}                          | 71383.8230527566   |
+| Node[324]{ASN:"1755",name:"AS1755 Svensk Teleutveckling & Produktinnovation, STUPI AB, SE"}             | 70465.87840823246  |
+| Node[1450]{ASN:"6762",name:"SEABONE-NET TELECOM ITALIA SPARKLE S.p.A., IT"}                             | 65770.31547013062  |
+| Node[9626]{ASN:"12313"}                                                                                 | 60603.8362334387   |
+| Node[10692]{ASN:"12885"}                                                                                | 57250.667306014475 |
+| Node[1094]{ASN:"5511",name:"OPENTRANSIT , FR"}                                                          | 56537.51461322983  |
+| Node[208]{ASN:"1221",name:"ASN-TELSTRA Telstra Pty Ltd, AU"}                                            | 55209.933747484094 |
+| Node[549]{ASN:"2914",name:"NTT-COMMUNICATIONS-2914 - NTT America, Inc., US"}                            | 54881.172475766776 |
+| Node[1348]{ASN:"6461",name:"ZAYO-6461 - Zayo Bandwidth Inc, US"}                                        | 51132.87582132862  |
+| Node[137]{ASN:"559",name:"SWITCH Peering requests: <peering@switch.ch>, CH"}                            | 51019.61611649456  |
+| Node[8954]{ASN:"8355"}                                                                                  | 49166.38239260739  |
+| Node[8897]{ASN:"10911"}                                                                                 | 48785.316836037266 |
+| Node[879]{ASN:"4589",name:"EASYNET Easynet Global Services, GB"}                                        | 47343.40686414909  |
+| Node[9542]{ASN:"1833"}                                                                                  | 46543.95924099398  |
+| Node[11495]{ASN:"8210"}                                                                                 | 45675.54465403879  |
+| Node[362]{ASN:"1913",name:"DNIC-ASBLK-01910-01914 - DoD Network Information Center, US"}                | 45296.22399465328  |
+| Node[8363]{ASN:"8297"}                                                                                  | 45174.646867508505 |
+| Node[10644]{ASN:"6728"}                                                                                 | 42924.84042334884  |
+| Node[157]{ASN:"703",name:"UUNET - MCI Communications Services, Inc. d/b/a Verizon Business, US"}        | 42360.65401610744  |
+| Node[2268]{ASN:"8938",name:"ENERGIS-IP , CH"}                                                           | 40098.26019406803  |
+| Node[4016]{ASN:"12541",name:"BTESPANA BT ES Datacenter and hosting ASN, ES"}                            | 37916.06512475622  |
+| Node[226]{ASN:"1299",name:"TELIANET , SE"}                                                              | 37624.33677294517  |
+| Node[11700]{ASN:"4682"}                                                                                 | 36553.35560214551  |
+| Node[223]{ASN:"1290",name:"TELSTRAEUROPELTD-BACKBONE Telstra Europe Ltd, GB"}                           | 35531.830647736824 |
+| Node[615]{ASN:"3300",name:"BT , NL"}                                                                    | 34937.61814686871  |
+| Node[449]{ASN:"2516",name:"KDDI KDDI CORPORATION, JP"}                                                  | 32346.205595415235 |
+| Node[1909]{ASN:"8151",name:"Uninet S.A. de C.V., MX"}                                                   | 31924.377753082623 |
+| Node[1031]{ASN:"5378",name:", GB"}                                                                      | 31145.59686443076  |
+| Node[517]{ASN:"2828",name:"XO-AS15 - XO Communications, US"}                                            | 27060.041385436038 |
+| Node[611]{ASN:"3292",name:"TDC TDC A/S, DK"}                                                            | 27014.01115639761  |
+| Node[163]{ASN:"721",name:"DNIC-ASBLK-00721-00726 - DoD Network Information Center, US"}                 | 26547.839133119523 |
+| Node[948]{ASN:"4766",name:"KIXS-AS-KR Korea Telecom, KR"}                                               | 26291.60287951426  |
+| Node[3407]{ASN:"11415",name:"LEVEL3 COMUNICA��ES DO BRASIL LTDA., BR"}                                  | 26213.89185776376  |
+| Node[4932]{ASN:"14318",name:"PSINet Chile, CL"}                                                         | 26144.18489569878  |
+| Node[342]{ASN:"1836",name:"GREEN green.ch AG Autonomous System, CH"}                                    | 25352.332617106542 |
+| Node[4330]{ASN:"13127",name:"VERSATEL AS for the Trans-European Tele2 IP Transport backbone, NL"}       | 24969.760153221883 |
+| Node[11687]{ASN:"16336"}                                                                                | 24670.374044825752 |
+| Node[638]{ASN:"3344",name:"BURSTFIRE Internet Solutions Provider, GB"}                                  | 24236.99988887924  |
+| Node[11132]{ASN:"8235"}                                                                                 | 23909.937044967548 |
+| Node[2130]{ASN:"8647",name:"OLGATV-AS , UA"}                                                            | 23894.262468087458 |
+| Node[2984]{ASN:"10417",name:"Funda��o de Desenvolvimento da Pesquisa, BR"}                              | 23327.94724715832  |
+| Node[894]{ASN:"4637",name:"ASN-TELSTRA-GLOBAL Telstra Global, HK"}                                      | 22575.72214319885  |
+| Node[99]{ASN:"237",name:"MERIT-AS-14 - Merit Network Inc., US"}                                         | 21517.274776778053 |
+| Node[747]{ASN:"3786",name:"LGDACOM LG DACOM Corporation, KR"}                                           | 21075.599298159344 |
+| Node[1126]{ASN:"5594",name:"LHSYSHU Neumann Janos u. 1/E., HU"}                                         | 20819.172061181664 |
+| Node[4739]{ASN:"13920",name:"IMORTGAGE-AS - iMortgage.com, Inc., US"}                                   | 19988.635860174712 |
+| Node[605]{ASN:"3269",name:"ASN-IBSNAZ , IT"}                                                            | 18426.75473109081  |
+| Node[1997]{ASN:"8342",name:"RTCOMM-AS , RU"}                                                            | 18250.84347284463  |
+| Node[10660]{ASN:"2548"}                                                                                 | 18239.961879443334 |
+| Node[9680]{ASN:"6395"}                                                                                  | 18223.699733469897 |
+| Node[903]{ASN:"4657",name:"STARHUBINTERNET-AS StarHub Internet Exchange, SG"}                           | 17872.437490786844 |
+| Node[1664]{ASN:"7473",name:"SINGTEL-AS-AP Singapore Telecommunications Ltd, SG"}                        | 17759.79886367691  |
+| Node[2042]{ASN:"8437",name:"UTA-AS , AT"}                                                               | 17727.93988552881  |
+| Node[1874]{ASN:"8048",name:"CANTV Servicios, Venezuela, VE"}                                            | 17373.400966423458 |
+| Node[788]{ASN:"3967",name:"NSM350 - Nationstar Mortgage, LLC, US"}                                      | 16258.998079394401 |
+| Node[4566]{ASN:"13591",name:"Brasil Telecom Comunica��o Multimidia, BR"}                                | 16237.81691204973  |
+| Node[1665]{ASN:"7474",name:"OPTUSCOM-AS01-AU SingTel Optus Pty Ltd, AU"}                                | 14366.340419053598 |
+| Node[962]{ASN:"4786",name:"COMSYSAUST-AS-AP Computer Systems (Australia) Pty Ltd, AU"}                  | 13987.861853860948 |
+| Node[11490]{ASN:"8335"}                                                                                 | 13697.482923691821 |
+| Node[2237]{ASN:"8881",name:"VERSATEL , DE"}                                                             | 12723.755990056674 |
+| Node[2064]{ASN:"8477",name:"ECHOSTARPL-AS ZTS Echostar Studio Poznan Poland, PL"}                       | 12723.379759491252 |
+| Node[11790]{ASN:"2915"}                                                                                 | 12528.234314235855 |
+| Node[2390]{ASN:"9193",name:"CONXIONEU , NL"}                                                            | 12270.649216557955 |
+| Node[5378]{ASN:"15206",name:"MDSG-PACWEST - Pac-West Telecomm, INC., US"}                               | 12255.549558774559 |
+| Node[4973]{ASN:"14390",name:"CORENET - Coretel America, Inc., US"}                                      | 12145.819355530695 |
+| Node[341]{ASN:"1835",name:"FSKNET-DK Forskningsnettet - Danish network for Research and Education, DK"} | 12099.13265873016  |
+| Node[5659]{ASN:"15732",name:"IBERBANDA-SPAIN Iberbanda AS for Spanish operations, ES"}                  | 12017.390793650795 |
++------------------------------------------------------------------------------------------------------------------------------+
+100 rows
+8803 ms
+neo4j-sh (?)$ 

@@ -6,17 +6,28 @@
 from _pybgpstream import BGPStream, BGPRecord, BGPElem
 from collections import defaultdict
 import string
+import sys
 
 # Initialize BGPStream with relevant filters
 stream = BGPStream()
 rec = BGPRecord()
 
-collectors = ['rrc01','rrc14','rrc15']
-for collector in collectors:
-  stream.add_filter('collector', collector)
-stream.add_filter('record-type','ribs')
-stream.add_interval_filter(1438415400,1438416600)
-stream.add_filter('prefix', '8.0.0.0/8')
+mode = ""
+if len(sys.argv) == 1:
+  collectors = ['rrc00', 'rrc01', 'rrc03', 'rrc04', 'rrc05']
+  for collector in collectors:
+    stream.add_filter('collector', collector)
+  stream.add_filter('record-type','ribs')
+  stream.add_interval_filter(1475310000,1475350000)
+  stream.add_filter('prefix', '8.0.0.0/8')
+  mode = 'ripe'
+elif len(sys.argv) == 2:
+  filename = sys.argv[1]
+  stream.set_data_interface('singlefile')
+  stream.set_data_interface_option('singlefile', 'rib-file', filename)
+  collectors = ['singlefile_ds']
+  mode = 'file'
+
 
 stream.start()
 
@@ -57,7 +68,6 @@ while(stream.get_next_record(rec)):
   while(elem):
     prefix  = elem.fields['prefix']
     as_path = elem.fields['as-path'].split(' ')
-    print as_path
 
     route_id = (collector, as_path[0], prefix)
 
@@ -75,10 +85,14 @@ while(stream.get_next_record(rec)):
     if(not as_path[0] in AS_set):
       AS_set.add(as_path[0])
 
+    if as_path[0] == '':
+      elem = rec.get_next_elem()
+      continue
+
     pair = (collector,as_path[0])
     if(not pair in connections_set):
       connections_set.add(pair)
-      connect_rels_file.write("{c}|{asn}|TO\n".format(c=collector,asn=as_path[0]))
+      connect_rels_file.write("{c}|{asn}|VIEWS\n".format(c=collector,asn=as_path[0]))
     route_rels_file.write("{rid}|{asn}|HAS_AS|1\n".format(rid=route_id,asn=as_path[0]))
 
     for i in range(len(as_path)-1):
@@ -112,6 +126,8 @@ for line in asnames_file:
   l = line.split(None, 1)
   asn = l[0].lstrip(string.ascii_letters)
   name = l[1].rstrip()
+  name = name.replace('|', '')
+  name = name.replace('|', '')
   if asn in AS_set:
     AS_file.write("{asn}|{name}|AS\n".format(asn = asn, name = name))
     AS_set.remove(asn)

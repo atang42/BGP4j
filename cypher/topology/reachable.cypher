@@ -13,3 +13,8 @@ match (c:Collector), (a:AS)
 where a.ASN="3"
 return c.name as Collector, a.ASN as ASN, a.name as AS_Name, exists( (c)-[:TO*]->(a) as Reachable;
 
+// Determine prefixes advertised by multiple ASs
+match(prefix:IP_Block)<-[:ORIGINATES]-(as:AS)
+with prefix, collect(as) as AS_List
+where size(AS_List) > 1
+return prefix, AS_List

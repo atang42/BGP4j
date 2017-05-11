@@ -44,7 +44,7 @@ return avg(Num_ASes) as Average_Degree;
 
 //Distribution of distance of ASes from collectors
 match (a:Collector), (b:AS), path = shortestPath( (a)-[*]->(b))
-with a.name as Collector, b, length(path)-1 as Length
+with a.name as Collector, b, length(path) as Length
 return Collector, Length, count(b) as Count 
 order by Collector, Length;
 
@@ -53,22 +53,24 @@ match (a:AS)
 optional match (a)-[:TO]->(out:AS)
 with a, count(out) as out_degree
 optional match (a)<-[:TO]-(in:AS)
-return a as AS, in_degree, count(in) as out_degree
+return a as AS, out_degree, count(in) as in_degree
 order by in_degree - out_degree desc
 limit 30;
 
-// Show number of times a connection appears in the routing
-match (a:AS)-[r:TO]->(b:AS)
-return a, b, r.count order by r.count desc
+// Number of times an AS appears in the routing
+match (a:AS)-[r:TO]-()
+return a, sum(r.count) as count
+order by count desc
 limit 100;
 
 // Local clustering coefficient of each AS
 match (node:AS)-[:TO]-(neighbor:AS)
 with node, count(neighbor) as degree
-match (n1:AS)-[:TO]-(node)-[:TO]-(n2:AS)-[r:TO]-(n1)
-with node, degree, count(r)/2 as edges
-return node, toFloat(edges) / (degree * (degree-1) / 2) as clustering
-order by clustering desc limit 100;
+match (n1:AS)-[:TO]-(node)-[:TO]-(n2:AS)
+where exists((n1)-[:TO]-(n2))
+with node, degree, count(*)/2 as edges
+return node, degree, edges, toFloat(edges) / (degree * (degree-1) / 2) as clustering
+limit 100;
 
 // Page rank using APOC
 MATCH (node:AS)

@@ -34,4 +34,24 @@ where b.block = "8.0.0.0/8"
 return c.name as Collector, r.length as Length, count(r) as Count
 order by Collector, Length;
 
+// How many routes an AS appears in
+match (as:AS)<-[:HAS_AS]-(r:Route)
+return as.ASN as ASN, as.name as Name, count(r) as Num_Routes
+order by Num_Routes desc
+
+// How many routes to an ip address
+match (ip:IP_Block)<-[:HAS_IP_BLOCK]-(r:Route)
+return ip.block as IP_Block, count(r) as Num_Routes
+order by Num_Routes desc
+
+// Pairs that share routes
+match (a:AS)<-[:HAS_AS]-(r:Route)-[:HAS_AS]->(b:AS)
+return a, b, count(r) as Num_Routes
+order by Num_Routes desc
+
+// How many AS path prepending
+match (r:Route)-[rel:HAS_AS]->()
+where rel.order != r.length
+return count(r)
+
 

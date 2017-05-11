@@ -12,10 +12,11 @@ COMMAND="$IMPORT --delimiter | \
                  --nodes $CSV_DIR/collector.csv
                  --nodes $CSV_DIR/AS.csv \
                  --nodes $CSV_DIR/prefix.csv \
-                 --nodes $CSV_DIR/connections.csv \
                  --nodes $CSV_DIR/route.csv \
                  --relationships $CSV_DIR/connect_rels.csv \
+                 --relationships $CSV_DIR/subnet_rels.csv \
                  --relationships $CSV_DIR/route_rels.csv"
+
 
 
 # Make sure database is empty
